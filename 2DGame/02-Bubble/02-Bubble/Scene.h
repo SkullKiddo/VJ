@@ -6,11 +6,17 @@
 #include "ShaderProgram.h"
 #include "TileMap.h"
 #include "Player.h"
+#include "Background.h"
 
 
 // Scene contains all the entities of our game.
 // It is responsible for updating and render them.
 
+struct Maps
+{
+	TileMap *map;
+	TileMap *collision;
+};
 
 class Scene
 {

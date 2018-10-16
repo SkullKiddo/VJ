@@ -7,13 +7,18 @@
 #include "TileMap.h"
 
 
-#define CAMERA_WIDTH 640
-#define CAMERA_HEIGHT 480
+#define CAMERA_WIDTH 1680
+#define CAMERA_HEIGHT 1040
 
 
 // Scene contains all the entities of our game.
 // It is responsible for updating and render them.
 
+struct Mapping
+{
+	TileMap *map;
+	TileMap *collisions;
+};
 
 class Scene
 {
@@ -25,15 +30,18 @@ public:
 	void init();
 	void update(int deltaTime);
 	void render();
+	void setCollsion();
 
 private:
 	void initShaders();
 
 private:
 	TileMap *map;
+	bool bcollision = false;
 	ShaderProgram texProgram;
 	float currentTime;
 	glm::mat4 projection;
+	Mapping mapping;
 
 };
 

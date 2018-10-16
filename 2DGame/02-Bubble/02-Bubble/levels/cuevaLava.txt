@@ -1,6 +1,6 @@
 TILEMAP
 50 11							-- Size of tile map in tiles
-32 64 							-- Tile size & block size
+16 64 							-- Tile size & block size
 images/blocks.png 	-- Tilesheet
 2 2 	
 11111111111111111111111111111111111111111111111111

@@ -5,8 +5,8 @@
 #include "Game.h"
 
 
-#define SCREEN_X 0
-#define SCREEN_Y 128
+#define SCREEN_X 16
+#define SCREEN_Y 32
 
 #define INIT_PLAYER_X_TILES 1
 #define INIT_PLAYER_Y_TILES 7
@@ -31,11 +31,12 @@ void Scene::init()
 {
 	initShaders();
 	map = TileMap::createTileMap("levels/cuevaLava.txt", glm::vec2(SCREEN_X, SCREEN_Y), texProgram); //"levels/cuevaLava.txt"     "levels/level01.txt" //TODO pasarli a create map una imatge de background
+	//Background back = Background("images/rocks.jpeg",texProgram,glm::vec2(0.f,0.f));
 	player = new Player();
 	player->init(glm::ivec2(SCREEN_X, SCREEN_Y), texProgram);
 	player->setPosition(glm::vec2(INIT_PLAYER_X_TILES * map->getTileSize(), INIT_PLAYER_Y_TILES * map->getTileSize()));
 	player->setTileMap(map);
-	projection = glm::ortho(0.f, float(SCREEN_WIDTH/2), float(SCREEN_HEIGHT - 1)/2, 0.f);
+	projection = glm::ortho(0.f, float(SCREEN_WIDTH/2 - 1), float(SCREEN_HEIGHT/2 -1), 0.f);
 	currentTime = 0.0f;
 }
 

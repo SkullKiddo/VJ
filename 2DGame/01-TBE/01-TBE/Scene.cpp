@@ -19,7 +19,8 @@ Scene::~Scene()
 void Scene::init()
 {
 	initShaders();
-	map = TileMap::createTileMap("levels/level01.txt", glm::vec2(32, 16), texProgram);
+	mapping.map = TileMap::createTileMap("levels/Arena.txt", glm::vec2(0, 0), texProgram);
+	mapping.collisions = TileMap::createTileMap("levels/Arena_collision.txt", glm::vec2(0, 0), texProgram);
 	projection = glm::ortho(0.f, float(CAMERA_WIDTH - 1), float(CAMERA_HEIGHT - 1), 0.f);
 	currentTime = 0.0f;
 }
@@ -38,7 +39,8 @@ void Scene::render()
 	texProgram.setUniform4f("color", 1.0f, 1.0f, 1.0f, 1.0f);
 	modelview = glm::mat4(1.0f);
 	texProgram.setUniformMatrix4f("modelview", modelview);
-	map->render();
+	mapping.map ->render();
+	if (!bcollision) mapping.collisions->render();
 }
 
 void Scene::initShaders()
@@ -69,6 +71,10 @@ void Scene::initShaders()
 	texProgram.bindFragmentOutput("outColor");
 	vShader.free();
 	fShader.free();
+}
+
+void Scene::setCollsion() {
+	bcollision = !bcollision;
 }
 
 
