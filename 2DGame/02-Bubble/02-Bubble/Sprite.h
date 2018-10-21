@@ -33,6 +33,7 @@ public:
 	int animation() const;
 	
 	void setPosition(const glm::vec2 &pos);
+	bool finished(); //diu si la animacio ha acabat
 
 private:
 	Texture *texture;
@@ -45,6 +46,7 @@ private:
 	float timeAnimation;
 	glm::vec2 texCoordDispl;
 	vector<AnimKeyframes> animations;
+	bool finishedAnim;
 
 };
 

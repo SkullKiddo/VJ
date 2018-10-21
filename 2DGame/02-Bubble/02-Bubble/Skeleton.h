@@ -12,10 +12,14 @@ public:
 	void init(const glm::ivec2 &tileMapPos, ShaderProgram &shaderProgram);
 	void update(int deltaTime);
 	void render();
+	void hit();
 
 private:
 	Texture spritesheet;
 	Sprite *sprite;
+	bool alive;
+	int lifes;
+	bool vulnerable;
 };
 
 #endif
