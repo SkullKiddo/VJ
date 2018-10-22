@@ -1,6 +1,0 @@
-TILEMAP
-1 1 							-- Size of tile map in tiles
-16800 1680					    -- Tile size & block size
-Background/Arena.png 				-- Tilesheet
-1 1 							-- Number of tiles in tilesheet
-1

@@ -37,15 +37,16 @@ void Skeleton::hit() {
 	}
 }
 
-void Skeleton::init(const glm::ivec2 &tileMapPos, ShaderProgram &shaderProgram) {
-	
+void Skeleton::init(const glm::ivec2 &posInicial, ShaderProgram &shaderProgram) {
+	//posSkeleton = tileMapPos;
 	vulnerable = false;
 	alive = true;
-	lifes = 3;
-
+	lifes = 99;
+	sizeSkeleton = glm::ivec2(43 * 3, 37 * 3);
+	posSkeleton = posInicial;
 	spritesheet.loadFromFile("images/esqueleto.png", TEXTURE_PIXEL_FORMAT_RGBA);
 	spritesheet.setMagFilter(GL_NEAREST);
-	sprite = Sprite::createSprite(glm::ivec2(43*3, 37*3), glm::vec2(anchframe,altframe), &spritesheet, &shaderProgram);
+	sprite = Sprite::createSprite(sizeSkeleton, glm::vec2(anchframe,altframe), &spritesheet, &shaderProgram);
 	sprite->setNumberAnimations(20);
 
 	for (int i = 0; i < 12; i+=2) {
@@ -68,9 +69,9 @@ void Skeleton::init(const glm::ivec2 &tileMapPos, ShaderProgram &shaderProgram) 
 	
 
 	sprite->changeAnimation(DIEDEDED_LEFT);
-	tileMapDispl = tileMapPos;
-	sprite->setPosition(glm::vec2(tileMapDispl.x, tileMapDispl.y));
-	setPosition();
+	//tileMapDispl = tileMapPos;
+	sprite->setPosition(glm::vec2(posSkeleton.x, posSkeleton.y));
+	//setPosition();
 }
 
 void Skeleton::update(int deltaTime)
@@ -91,12 +92,22 @@ void Skeleton::update(int deltaTime)
 				if (anim != MOVE_LEFT)
 					sprite->changeAnimation(MOVE_LEFT);
 				posSkeleton.x -= 1;
+				if (map->collisionMoveLeft(posSkeleton, sizeSkeleton))
+				{
+					posSkeleton.x += 1;
+					sprite->changeAnimation(IDDLE_LEFT);
+				}
 			}
 			else if (Game::instance().getSpecialKey(GLUT_KEY_RIGHT))
 			{
 				if (anim != MOVE_RIGHT)
 					sprite->changeAnimation(MOVE_RIGHT);
 				posSkeleton.x += 1;
+				if (map->collisionMoveRight(posSkeleton, sizeSkeleton))
+				{
+					posSkeleton.x -= 1;
+					sprite->changeAnimation(IDDLE_RIGHT);
+				}
 			}
 
 			else if (!Game::instance().getSpecialKey(GLUT_KEY_UP) && !Game::instance().getSpecialKey(GLUT_KEY_DOWN))
@@ -112,6 +123,11 @@ void Skeleton::update(int deltaTime)
 					if (anim % 2 != 0) sprite->changeAnimation(MOVE_LEFT);
 					else sprite->changeAnimation(MOVE_RIGHT);
 				}
+				if (map->collisionMoveDown(posSkeleton, sizeSkeleton))
+				{
+					posSkeleton.y -= 1;
+					sprite->changeAnimation(IDDLE_LEFT);
+				}
 			}
 			else if (Game::instance().getSpecialKey(GLUT_KEY_UP))
 			{
@@ -119,6 +135,11 @@ void Skeleton::update(int deltaTime)
 				if (anim != MOVE_RIGHT && anim != MOVE_LEFT) {
 					if (anim % 2 != 0) sprite->changeAnimation(MOVE_LEFT);
 					else sprite->changeAnimation(MOVE_RIGHT);
+				}
+				if (map->collisionMoveUp(posSkeleton, sizeSkeleton))
+				{
+					posSkeleton.y += 1;
+					sprite->changeAnimation(IDDLE_LEFT);
 				}
 			}
 			else if (!Game::instance().getSpecialKey(GLUT_KEY_LEFT) && !Game::instance().getSpecialKey(GLUT_KEY_RIGHT))
@@ -145,7 +166,7 @@ void Skeleton::setTileMap(TileMap *tileMap)
 
 void Skeleton::setPosition()
 {
-	sprite->setPosition(glm::vec2(float(tileMapDispl.x + posSkeleton.x), float(tileMapDispl.y + posSkeleton.y)));
+	sprite->setPosition(glm::vec2(float( posSkeleton.x), float(posSkeleton.y)));
 }
 
 void Skeleton::render()

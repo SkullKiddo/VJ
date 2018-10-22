@@ -17,7 +17,8 @@ public:
 	void setTileMap(TileMap *tileMap);
 	void setPosition();
 
-	glm::ivec2 posSkeleton;
+
+
 
 
 private:
@@ -27,8 +28,12 @@ private:
 	int lifes;
 	bool vulnerable;
 	TileMap *map;
-
+	glm::ivec2 posSkeleton;
+	glm::ivec2 sizeSkeleton;
+	glm::ivec2 colisionBox;
 	glm::ivec2 tileMapDispl;
+	glm::ivec2  colisionOffset;
+
 };
 
 #endif

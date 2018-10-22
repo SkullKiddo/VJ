@@ -1,7 +1,0 @@
-altura 37
-ancho maximum(774/18 495/15 240/8 88/4 24)
-
-cada imagen mide (43+25)x37 = 57x37
-
-para que cuadren hay que moverlo 25 pixeles
-

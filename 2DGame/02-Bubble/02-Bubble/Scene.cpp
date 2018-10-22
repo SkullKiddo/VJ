@@ -36,15 +36,16 @@ void Scene::init()
 	setBackground("Background/Arena.png");
 	map = TileMap::createTileMap("levels/Arena_collision.txt", glm::vec2(SCREEN_X, SCREEN_Y), texProgram); //"levels/cuevaLava.txt"     "levels/level01.txt" //TODO pasarli a create map una imatge de background
 	//Background back = Background("images/rocks.jpeg",texProgram,glm::vec2(0.f,0.f));
-	//player = new Player();
-	//player->init(glm::ivec2(SCREEN_X, SCREEN_Y), texProgram);
-	//player->setPosition(glm::vec2(INIT_PLAYER_X_TILES * map->getTileSize(), INIT_PLAYER_Y_TILES * map->getTileSize()));
-	//player->setTileMap(map);
+	/*player = new Player(); /DESCOMENTAR A PLAYER FARA QUE CAIGUI INFINITAMENT FINS A SORTIRSE DEL MAP I PROVOCAR UN FALLO DE LECTURA AL COMPROVAR COLISIONS
+	player->init(glm::ivec2(SCREEN_X, SCREEN_Y), texProgram);
+	player->setPosition(glm::vec2(INIT_PLAYER_X_TILES * map->getTileSize(), INIT_PLAYER_Y_TILES * map->getTileSize()));
+	player->setTileMap(map);*/
 	projection = glm::ortho(0.f, float(SCREEN_WIDTH), float(SCREEN_HEIGHT), 0.f);
 	currentTime = 0.0f;
 
 	skeleton = new Skeleton();
 	skeleton->init(glm::ivec2(SCREEN_WIDTH/2, SCREEN_HEIGHT/2), texProgram);
+	skeleton->setTileMap(map);
 }
 
 void Scene::update(int deltaTime)
