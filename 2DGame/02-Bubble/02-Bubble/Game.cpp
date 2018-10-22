@@ -28,6 +28,8 @@ void Game::keyPressed(int key)
 	if(key == 27) // Escape code
 		bPlay = false;
 	keys[key] = true;
+	if (key == 'c') // Activar mapa de colisiones
+		scene.setCollsion();
 }
 
 void Game::keyReleased(int key)

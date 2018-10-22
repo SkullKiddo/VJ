@@ -14,12 +14,21 @@ public:
 	void render();
 	void hit();
 
+	void setTileMap(TileMap *tileMap);
+	void setPosition();
+
+	glm::ivec2 posSkeleton;
+
+
 private:
 	Texture spritesheet;
 	Sprite *sprite;
 	bool alive;
 	int lifes;
 	bool vulnerable;
+	TileMap *map;
+
+	glm::ivec2 tileMapDispl;
 };
 
 #endif

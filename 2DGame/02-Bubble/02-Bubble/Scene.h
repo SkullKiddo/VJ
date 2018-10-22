@@ -7,8 +7,8 @@
 #include "TileMap.h"
 #include "Player.h"
 #include "Skeleton.h"
-#include "Background.h"
-
+#include "TexturedQuad.h"
+#include "Texture.h"
 
 // Scene contains all the entities of our game.
 // It is responsible for updating and render them.
@@ -16,7 +16,7 @@
 struct Maps
 {
 	TileMap *map;
-	TileMap *collision;
+	TileMap *collisions;
 };
 
 class Scene
@@ -29,18 +29,24 @@ public:
 	void init();
 	void update(int deltaTime);
 	void render();
+	void setBackground(const string &filename);
+	void setCollsion();
 
 private:
 	void initShaders();
 
 private:
 	TileMap *map;
+	Maps mapping;
 	Player *player;
 	Skeleton *skeleton;
 	ShaderProgram texProgram;
 	float currentTime;
 	glm::mat4 projection;
 
+	Texture texs;
+	TexturedQuad *background;
+	bool bcollision = false;
 };
 
 

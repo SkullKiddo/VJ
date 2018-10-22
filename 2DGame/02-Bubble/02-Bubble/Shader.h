@@ -40,7 +40,6 @@ private:
 	GLuint shaderId;
 	bool compiled;
 	string errorLog;
-
 };
 
 

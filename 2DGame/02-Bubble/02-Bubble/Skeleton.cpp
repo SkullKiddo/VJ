@@ -44,6 +44,7 @@ void Skeleton::init(const glm::ivec2 &tileMapPos, ShaderProgram &shaderProgram) 
 	lifes = 3;
 
 	spritesheet.loadFromFile("images/esqueleto.png", TEXTURE_PIXEL_FORMAT_RGBA);
+	spritesheet.setMagFilter(GL_NEAREST);
 	sprite = Sprite::createSprite(glm::ivec2(43*3, 37*3), glm::vec2(anchframe,altframe), &spritesheet, &shaderProgram);
 	sprite->setNumberAnimations(20);
 
@@ -67,8 +68,9 @@ void Skeleton::init(const glm::ivec2 &tileMapPos, ShaderProgram &shaderProgram) 
 	
 
 	sprite->changeAnimation(DIEDEDED_LEFT);
-	//glm::ivec2 tileMapDispl = tileMapPos;
-	sprite->setPosition(glm::vec2(20, 20));
+	tileMapDispl = tileMapPos;
+	sprite->setPosition(glm::vec2(tileMapDispl.x, tileMapDispl.y));
+	setPosition();
 }
 
 void Skeleton::update(int deltaTime)
@@ -77,7 +79,7 @@ void Skeleton::update(int deltaTime)
 	sprite->update(deltaTime);
 	int anim = sprite->animation();
 	if (sprite->finished()) vulnerable = true;
-	if(alive) {
+	if (alive) {
 		if (sprite->finished() || (anim != HIT_LEFT && anim != HIT_RIGHT && anim != ATACK_LEFT && anim != ATACK_RIGHT)) {
 
 			if (Game::instance().getKey('a')) {
@@ -88,15 +90,40 @@ void Skeleton::update(int deltaTime)
 			{
 				if (anim != MOVE_LEFT)
 					sprite->changeAnimation(MOVE_LEFT);
+				posSkeleton.x -= 1;
 			}
 			else if (Game::instance().getSpecialKey(GLUT_KEY_RIGHT))
 			{
 				if (anim != MOVE_RIGHT)
 					sprite->changeAnimation(MOVE_RIGHT);
+				posSkeleton.x += 1;
 			}
-			else
+
+			else if (!Game::instance().getSpecialKey(GLUT_KEY_UP) && !Game::instance().getSpecialKey(GLUT_KEY_DOWN))
 			{
-				if (anim%2 == 0 && anim != IDDLE_RIGHT) sprite->changeAnimation(IDDLE_RIGHT);
+				if (anim % 2 == 0 && anim != IDDLE_RIGHT) sprite->changeAnimation(IDDLE_RIGHT);
+				else if (anim != IDDLE_LEFT && anim != IDDLE_RIGHT) sprite->changeAnimation(IDDLE_LEFT);
+			}
+
+			if (Game::instance().getSpecialKey(GLUT_KEY_DOWN))
+			{
+				posSkeleton.y += 1;
+				if (anim != MOVE_RIGHT && anim != MOVE_LEFT) {
+					if (anim % 2 != 0) sprite->changeAnimation(MOVE_LEFT);
+					else sprite->changeAnimation(MOVE_RIGHT);
+				}
+			}
+			else if (Game::instance().getSpecialKey(GLUT_KEY_UP))
+			{
+				posSkeleton.y -= 1;
+				if (anim != MOVE_RIGHT && anim != MOVE_LEFT) {
+					if (anim % 2 != 0) sprite->changeAnimation(MOVE_LEFT);
+					else sprite->changeAnimation(MOVE_RIGHT);
+				}
+			}
+			else if (!Game::instance().getSpecialKey(GLUT_KEY_LEFT) && !Game::instance().getSpecialKey(GLUT_KEY_RIGHT))
+			{
+				if (anim % 2 == 0 && anim != IDDLE_RIGHT) sprite->changeAnimation(IDDLE_RIGHT);
 				else if (anim != IDDLE_LEFT && anim != IDDLE_RIGHT) sprite->changeAnimation(IDDLE_LEFT);
 			}
 		}
@@ -107,6 +134,18 @@ void Skeleton::update(int deltaTime)
 			else sprite->changeAnimation(DIEDEDED_LEFT);
 		}
 	}
+
+	setPosition();
+}
+
+void Skeleton::setTileMap(TileMap *tileMap)
+{
+	map = tileMap;
+}
+
+void Skeleton::setPosition()
+{
+	sprite->setPosition(glm::vec2(float(tileMapDispl.x + posSkeleton.x), float(tileMapDispl.y + posSkeleton.y)));
 }
 
 void Skeleton::render()
