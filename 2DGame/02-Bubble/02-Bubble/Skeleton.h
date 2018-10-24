@@ -33,7 +33,6 @@ private:
 	glm::ivec2 colisionBox;
 	glm::ivec2 tileMapDispl;
 	glm::ivec2  colisionOffset;
-
 };
 
 #endif
