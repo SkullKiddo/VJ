@@ -46,6 +46,13 @@ void Scene::init()
 	skeleton = new Skeleton();
 	skeleton->init(glm::ivec2(SCREEN_WIDTH/2, SCREEN_HEIGHT/2), texProgram);
 	skeleton->setTileMap(map);
+
+	heavyBandit = new HeavyBandit();
+	heavyBandit->init(glm::ivec2(SCREEN_WIDTH / 2, SCREEN_HEIGHT / 2), texProgram);
+	heavyBandit->setTileMap(map);
+
+
+
 }
 
 void Scene::update(int deltaTime)
@@ -53,11 +60,21 @@ void Scene::update(int deltaTime)
 	currentTime += deltaTime;
 	//player->update(deltaTime);
 	skeleton->update(deltaTime);
+	heavyBandit->update(deltaTime);
 	//float cameraOffsetX = -20 + player->posPlayer.x;
 	//int maxOffsetX = float(SCREEN_WIDTH) + map->getMapSize().x+64; //TODO dependre el maxim offset de la camara del tamany de tile i personatge
 	//cameraOffsetX = (cameraOffsetX < maxOffsetX)?cameraOffsetX : maxOffsetX; //el maxim
 	//projection = glm::ortho(0.f + cameraOffsetX, float(SCREEN_WIDTH) + cameraOffsetX, float(SCREEN_HEIGHT - 1), 0.f);
 	if (Game::instance().getKey('h')) skeleton->hit();
+	
+}
+
+
+void Scene::handleAtacks() {	//comprova si esta atacant cada enemic i ens golpeja si estem a la seva hitbox
+	if (skeleton->atacking)
+	{
+		
+	}
 }
 
 void Scene::render()
@@ -74,6 +91,7 @@ void Scene::render()
 	if (bcollision) map->render();
 	//player->render();
 	skeleton->render();
+	heavyBandit->render();
 }
 
 void Scene::initShaders()

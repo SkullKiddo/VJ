@@ -4,6 +4,7 @@
 #include <GL/glut.h>
 #include "Skeleton.h"
 #include "Game.h"
+#include <Mmsystem.h>
 
 #define MOVEMENT_SPEED 8
 #define SIZE 10
@@ -17,7 +18,7 @@ enum PlayerAnims
 	ATACK_RIGHT, ATACK_LEFT, REACT_RIGHT, REACT_LEFT, DIE_RIGHT, DIE_LEFT, IDDLE_RIGHT, IDDLE_LEFT, HIT_RIGHT, HIT_LEFT, MOVE_RIGHT, MOVE_LEFT, DIEDEDED_RIGHT, DIEDEDED_LEFT
 };
 
-int animSize[] = {18,4,15,11,8,13};
+int skeletonAnimSize[] = {18,4,15,11,8,13};
 
 void Skeleton::hit() {
 	if (vulnerable && alive) {
@@ -43,9 +44,9 @@ void Skeleton::init(const glm::ivec2 &posInicial, ShaderProgram &shaderProgram) 
 	alive = true;
 	lifes = 3;
 	sizeSkeleton = glm::ivec2(43 * 3, 37 * 3);
-	colisionBox.x = (sizeSkeleton.x *22.0f) / 68.0f;		//22 es els pixels quefa d'ample el personatge, 68 el tamany total del sprite
+	colisionBox.x = sizeSkeleton.x;		//22 es els pixels quefa d'ample el personatge, 68 el tamany total del sprite
 	colisionBox.y = (sizeSkeleton.y) / 37.0f;				//37 perque te 37 pixels i vull que sigui nomes un pixel de ample
-	colisionOffset.x = (sizeSkeleton.x *21.0f) / 68.0f;		//21 son els pixels que em sobren per davant i 68 el total
+	colisionOffset.x = (sizeSkeleton.x *26.0f) / 68.0f;		//21 son els pixels que em sobren per davant i 68 el total
 	colisionOffset.y = (sizeSkeleton.y) - colisionBox.y;	//aixo esta bé mentre es recolzi al terra per la part mes baixa (que en principi sera aixi amb tot personatge)
 	posSkeleton = posInicial;
 	spritesheet.loadFromFile("images/esqueleto.png", TEXTURE_PIXEL_FORMAT_RGBA);
@@ -55,14 +56,14 @@ void Skeleton::init(const glm::ivec2 &posInicial, ShaderProgram &shaderProgram) 
 
 	for (int i = 0; i < 12; i+=2) {
 		sprite->setAnimationSpeed(i, MOVEMENT_SPEED);
-		for (int j = 0; j < animSize[i/2]; j++) 
+		for (int j = 0; j < skeletonAnimSize[i/2]; j++)
 			sprite->addKeyframe(i, glm::vec2(anchframe * j, altframe * i));
 	}
 
 	for (int i = 1; i < 12; i+=2) {
 		sprite->setAnimationSpeed(i, MOVEMENT_SPEED);
-		for (int j = 0; j < animSize[i/2]; j++)
-			sprite->addKeyframe(i, glm::vec2(anchframe * (animSize[i/2]-1 - j), altframe * i));
+		for (int j = 0; j < skeletonAnimSize[i/2]; j++)
+			sprite->addKeyframe(i, glm::vec2(anchframe * (skeletonAnimSize[i/2]-1 - j), altframe * i));
 	}
 
 	sprite->setAnimationSpeed(DIEDEDED_RIGHT, MOVEMENT_SPEED);
@@ -87,15 +88,21 @@ void Skeleton::update(int deltaTime)
 	if (sprite->finished()) vulnerable = true;
 	if (alive) {
 		if (sprite->finished() || (anim != HIT_LEFT && anim != HIT_RIGHT && anim != ATACK_LEFT && anim != ATACK_RIGHT)) {
+			atacking = false;
 			auto initialPos = posSkeleton;
 
-			if (Game::instance().getKey('a')) {
+			if (Game::instance().getKey('b')) {
+				atacking = true;
+				//PlaySound(TEXT("audio/axeSwingCutre.wav"), NULL, SND_FILENAME | SND_ASYNC | SND_NODEFAULT | SND_NOSTOP);
+				mciSendString(L"play audio/axeSwingCutre.wav", NULL, 0, NULL);
 				if (dreta) sprite->changeAnimation(ATACK_RIGHT);
 				else sprite->changeAnimation(ATACK_LEFT);
+				hitBox.mins = glm::ivec2(posSkeleton.x, posSkeleton.y);
+				hitBox.maxs = glm::ivec2(posSkeleton.x + hitBoxOffset.x, posSkeleton.y + hitBoxOffset.y);
 			}
 			else if (Game::instance().getSpecialKey(GLUT_KEY_RIGHT))
 			{
-				
+				dreta = true;
 				posSkeleton.x += 1;
 				if (map->collisionMoveRight(posSkeleton, colisionBox,colisionOffset))
 				{
@@ -106,6 +113,7 @@ void Skeleton::update(int deltaTime)
 			}
 			else if (Game::instance().getSpecialKey(GLUT_KEY_LEFT))
 			{
+				dreta = false;
 				posSkeleton.x -= 1;
 				if (map->collisionMoveLeft(posSkeleton, colisionBox, colisionOffset))
 				{
@@ -138,9 +146,9 @@ void Skeleton::update(int deltaTime)
 					else sprite->changeAnimation(MOVE_RIGHT);
 				}
 			}
-			if (initialPos == posSkeleton && anim != IDDLE_LEFT && anim != IDDLE_RIGHT){
-				if (dreta) sprite->changeAnimation(IDDLE_RIGHT);
-				else sprite->changeAnimation(IDDLE_LEFT);
+			if (initialPos == posSkeleton){
+				if (dreta && anim != IDDLE_RIGHT) sprite->changeAnimation(IDDLE_RIGHT);
+				else if(!dreta && anim != IDDLE_LEFT) sprite->changeAnimation(IDDLE_LEFT);
 			}
 		}
 	}

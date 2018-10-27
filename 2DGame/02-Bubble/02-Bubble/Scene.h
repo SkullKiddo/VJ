@@ -9,6 +9,7 @@
 #include "Skeleton.h"
 #include "TexturedQuad.h"
 #include "Texture.h"
+#include "HeavyBandit.h"
 
 // Scene contains all the entities of our game.
 // It is responsible for updating and render them.
@@ -40,6 +41,7 @@ private:
 	Maps mapping;
 	Player *player;
 	Skeleton *skeleton;
+	HeavyBandit *heavyBandit;
 	ShaderProgram texProgram;
 	float currentTime;
 	glm::mat4 projection;
@@ -47,6 +49,7 @@ private:
 	Texture texs;
 	TexturedQuad *background;
 	bool bcollision = false;
+	void handleAtacks();
 };
 
 
