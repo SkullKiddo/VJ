@@ -95,60 +95,50 @@ void Skeleton::update(int deltaTime)
 			}
 			else if (Game::instance().getSpecialKey(GLUT_KEY_RIGHT))
 			{
-				if (anim != MOVE_RIGHT)
-					sprite->changeAnimation(MOVE_RIGHT);
+				
 				posSkeleton.x += 1;
 				if (map->collisionMoveRight(posSkeleton, colisionBox,colisionOffset))
 				{
 					posSkeleton.x -= 1;
 				}
+				else if (anim != MOVE_RIGHT)
+					sprite->changeAnimation(MOVE_RIGHT);
 			}
 			else if (Game::instance().getSpecialKey(GLUT_KEY_LEFT))
 			{
-				if (anim != MOVE_LEFT)
-					sprite->changeAnimation(MOVE_LEFT);
 				posSkeleton.x -= 1;
 				if (map->collisionMoveLeft(posSkeleton, colisionBox, colisionOffset))
 				{
 					posSkeleton.x += 1;
 				}
+				else if (anim != MOVE_LEFT)
+					sprite->changeAnimation(MOVE_LEFT);
 			}
-			else if (!Game::instance().getSpecialKey(GLUT_KEY_UP) && !Game::instance().getSpecialKey(GLUT_KEY_DOWN))
-			{
-				if (dreta && anim != IDDLE_RIGHT) sprite->changeAnimation(IDDLE_RIGHT);
-				else if (anim != IDDLE_LEFT && anim != IDDLE_RIGHT) sprite->changeAnimation(IDDLE_LEFT);
-			}
-
 			if (Game::instance().getSpecialKey(GLUT_KEY_DOWN))
 			{
 				posSkeleton.y += 1;
-				if (anim != MOVE_RIGHT && anim != MOVE_LEFT) {
-					if (!dreta) sprite->changeAnimation(MOVE_LEFT);
-					else sprite->changeAnimation(MOVE_RIGHT);
-				}
 				if (map->collisionMoveDown(posSkeleton, colisionBox, colisionOffset))
 				{
 					posSkeleton.y -= 1;
+				}
+				else if (anim != MOVE_RIGHT && anim != MOVE_LEFT) {
+					if (!dreta) sprite->changeAnimation(MOVE_LEFT);
+					else sprite->changeAnimation(MOVE_RIGHT);
 				}
 			}
 			else if (Game::instance().getSpecialKey(GLUT_KEY_UP))
 			{
 				posSkeleton.y -= 1;
-				if (anim != MOVE_RIGHT && anim != MOVE_LEFT) {
-					if (!dreta) sprite->changeAnimation(MOVE_LEFT);
-					else sprite->changeAnimation(MOVE_RIGHT);
-				}
 				if (map->collisionMoveUp(posSkeleton, colisionBox, colisionOffset))
 				{
 					posSkeleton.y += 1;
 				}
+				else if (anim != MOVE_RIGHT && anim != MOVE_LEFT) {
+					if (!dreta) sprite->changeAnimation(MOVE_LEFT);
+					else sprite->changeAnimation(MOVE_RIGHT);
+				}
 			}
-			else if (!Game::instance().getSpecialKey(GLUT_KEY_LEFT) && !Game::instance().getSpecialKey(GLUT_KEY_RIGHT))
-			{
-				if (dreta && anim != IDDLE_RIGHT) sprite->changeAnimation(IDDLE_RIGHT);
-				else if (anim != IDDLE_LEFT && anim != IDDLE_RIGHT) sprite->changeAnimation(IDDLE_LEFT);
-			}
-			if (initialPos == posSkeleton) {
+			if (initialPos == posSkeleton && anim != IDDLE_LEFT && anim != IDDLE_RIGHT){
 				if (dreta) sprite->changeAnimation(IDDLE_RIGHT);
 				else sprite->changeAnimation(IDDLE_LEFT);
 			}
