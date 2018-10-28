@@ -13,6 +13,11 @@
 // able to manage animations stored as a spritesheet. 
 
 
+struct box {
+	glm::ivec2 mins;
+	glm::ivec2 maxs;
+};
+
 class Sprite
 {
 

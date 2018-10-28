@@ -16,6 +16,9 @@ public:
 
 	void setTileMap(TileMap *tileMap);
 	void setPosition();
+	glm::ivec2 pos;
+	box hitBox;
+	box hurtBox;
 
 
 
@@ -28,7 +31,6 @@ private:
 	int lifes;
 	bool vulnerable;
 	TileMap *map;
-	glm::ivec2 pos;
 	glm::ivec2 size;
 	glm::ivec2 colisionBox;
 	glm::ivec2 tileMapDispl;

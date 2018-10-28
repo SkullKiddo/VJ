@@ -5,6 +5,7 @@
 #include "Skeleton.h"
 #include "Game.h"
 #include <Mmsystem.h>
+#include "TexturedQuad.h"
 
 #define MOVEMENT_SPEED 8
 #define SIZE 10
@@ -12,6 +13,9 @@
 #define POSY 10
 #define altframe 1.f/12.f
 #define anchframe 1.f/18.f
+#define altFramePixels 37.f
+#define anchFramePixels 58.f
+#define atackChargingTime 20
 
 enum PlayerAnims
 {
@@ -39,15 +43,18 @@ void Skeleton::hit() {
 }
 
 void Skeleton::init(const glm::ivec2 &posInicial, ShaderProgram &shaderProgram) {
+
 	//posSkeleton = tileMapPos;
 	vulnerable = false;
 	alive = true;
 	lifes = 3;
-	sizeSkeleton = glm::ivec2(43 * 3, 37 * 3);
+	sizeSkeleton = glm::ivec2(80, 80);
 	colisionBox.x = sizeSkeleton.x;		//22 es els pixels quefa d'ample el personatge, 68 el tamany total del sprite
-	colisionBox.y = (sizeSkeleton.y) / 37.0f;				//37 perque te 37 pixels i vull que sigui nomes un pixel de ample
-	colisionOffset.x = (sizeSkeleton.x *26.0f) / 68.0f;		//21 son els pixels que em sobren per davant i 68 el total
+	colisionBox.y = (sizeSkeleton.y) / altFramePixels;				//37 perque te 37 pixels i vull que sigui nomes un pixel de ample
+	colisionOffset.x = (sizeSkeleton.x *26.0f) / anchFramePixels;		//21 son els pixels que em sobren per davant i 68 el total
 	colisionOffset.y = (sizeSkeleton.y) - colisionBox.y;	//aixo esta bé mentre es recolzi al terra per la part mes baixa (que en principi sera aixi amb tot personatge)
+	hitBoxOffset.x = (sizeSkeleton.x * 26.f) / anchFramePixels;
+	//hitBoxOffset.y = (sizeSkeleton.y * 37.f) / altFramePixels; Aixo no em cal perque el atack ocupa tota la vertical del sprite
 	posSkeleton = posInicial;
 	spritesheet.loadFromFile("images/esqueleto.png", TEXTURE_PIXEL_FORMAT_RGBA);
 	spritesheet.setMagFilter(GL_NEAREST);
@@ -83,22 +90,20 @@ void Skeleton::update(int deltaTime)
 {
 
 	sprite->update(deltaTime);
+	atacking = false;
 	int anim = sprite->animation();
 	bool dreta = anim % 2 == 0;
 	if (sprite->finished()) vulnerable = true;
 	if (alive) {
 		if (sprite->finished() || (anim != HIT_LEFT && anim != HIT_RIGHT && anim != ATACK_LEFT && anim != ATACK_RIGHT)) {
-			atacking = false;
 			auto initialPos = posSkeleton;
 
 			if (Game::instance().getKey('b')) {
-				atacking = true;
+				chargingAtack = true;
 				//PlaySound(TEXT("audio/axeSwingCutre.wav"), NULL, SND_FILENAME | SND_ASYNC | SND_NODEFAULT | SND_NOSTOP);
 				mciSendString(L"play audio/axeSwingCutre.wav", NULL, 0, NULL);
 				if (dreta) sprite->changeAnimation(ATACK_RIGHT);
 				else sprite->changeAnimation(ATACK_LEFT);
-				hitBox.mins = glm::ivec2(posSkeleton.x, posSkeleton.y);
-				hitBox.maxs = glm::ivec2(posSkeleton.x + hitBoxOffset.x, posSkeleton.y + hitBoxOffset.y);
 			}
 			else if (Game::instance().getSpecialKey(GLUT_KEY_RIGHT))
 			{
@@ -158,7 +163,23 @@ void Skeleton::update(int deltaTime)
 			else sprite->changeAnimation(DIEDEDED_LEFT);
 		}
 	}
+	if (chargingAtack) timeChargingAtack += deltaTime;
+	//if (timeChargingAtack == atackChargingTime) {
+		atacking = true;
+		if (dreta) {
+			hitBox.mins = glm::ivec2(posSkeleton.x+sizeSkeleton.x-hitBoxOffset.x, posSkeleton.y); //no foto offsets ni res perque ocupa tota la vertical
+			hitBox.maxs = glm::ivec2(posSkeleton.x + sizeSkeleton.x, posSkeleton.y + sizeSkeleton.y);
+		}
+		else {
+			hitBox.mins = glm::ivec2(posSkeleton.x+hitBoxOffset.x, posSkeleton.y);
+			hitBox.maxs = glm::ivec2(posSkeleton.x, posSkeleton.y+sizeSkeleton.y);
+		}
+		
+		timeChargingAtack = 0.f;
+		atacking = false;
+		
 
+	//}
 	setPosition();
 }
 

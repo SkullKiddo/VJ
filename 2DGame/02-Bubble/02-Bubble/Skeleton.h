@@ -7,12 +7,6 @@
 
 class Skeleton
 {
-
-	struct box {
-		glm::ivec2 mins;
-		glm::ivec2 maxs;
-	};
-
 public:
 	void init(const glm::ivec2 &tileMapPos, ShaderProgram &shaderProgram);
 	void update(int deltaTime);
@@ -23,6 +17,7 @@ public:
 	void setPosition();
 	bool atacking;
 	box hitBox;
+	glm::ivec2 posSkeleton;
 
 
 
@@ -34,8 +29,9 @@ private:
 	bool alive;
 	int lifes;
 	bool vulnerable;
+	bool chargingAtack;
+	float timeChargingAtack;
 	TileMap *map;
-	glm::ivec2 posSkeleton;
 	glm::ivec2 sizeSkeleton;
 	glm::ivec2 colisionBox;
 	glm::ivec2 tileMapDispl;

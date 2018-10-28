@@ -66,14 +66,104 @@ void Scene::update(int deltaTime)
 	//cameraOffsetX = (cameraOffsetX < maxOffsetX)?cameraOffsetX : maxOffsetX; //el maxim
 	//projection = glm::ortho(0.f + cameraOffsetX, float(SCREEN_WIDTH) + cameraOffsetX, float(SCREEN_HEIGHT - 1), 0.f);
 	if (Game::instance().getKey('h')) skeleton->hit();
+	handleAtacks();
 	
 }
 
+bool colision(box b1, box b2) {
+	//cada bool indica si el punt descrit esta compres en l'altre capsa en la seva dimensio ex: b1MinX sera true si nomes si b1.mins.x esta entre b2.mins.x i b2.max.x
+	bool b1MinX, b2MinX, b1MaxX, b2MaxX,  b1MinY, b1MaxY, b2MinY, b2MaxY;
+
+	if (b1.mins.x > b2.mins.x) {
+		if (b1.mins.x < b2.maxs.x) {
+			if (b1.mins.y > b2.mins.y) {
+				return true;
+			}
+			else if (b2.mins.y < b1.maxs.y) return true;
+
+			if (b1.maxs.y < b2.maxs.y) {
+				if (b1.maxs.y > b2.mins.y) return true;
+			}
+			else if (b2.maxs.y > b1.mins.y) return true;
+		}
+	}
+	else if (b2.mins.x < b1.maxs.x) {
+		if (b1.mins.y > b2.mins.y) {
+			if (b1.mins.y < b2.maxs.y) return true;
+		}
+		else if (b2.mins.y < b1.maxs.y) return true;
+
+		if (b1.maxs.y < b2.maxs.y) {
+			if (b1.maxs.y > b2.mins.y) return true;
+		}
+		else if (b2.maxs.y > b1.mins.y) return true;
+	}
+
+	if (b1.maxs.x < b2.maxs.x) {
+		if (b1.maxs.x > b2.mins.x) {
+			if (b1.mins.y > b2.mins.y) {
+				if (b1.mins.y < b2.maxs.y) return true;
+			}
+			else if (b2.mins.y < b1.maxs.y) return true;
+
+			if (b1.maxs.y < b2.maxs.y) {
+				if (b1.maxs.y > b2.mins.y) return true;
+			}
+			else if (b2.maxs.y > b1.mins.y) return true;
+		}
+	}
+	else if (b2.maxs.x > b1.mins.x) {
+		if (b1.mins.y > b2.mins.y) {
+			if (b1.mins.y < b2.maxs.y) return true;
+		}
+		else if (b2.mins.y < b1.maxs.y) return true;
+
+		if (b1.maxs.y < b2.maxs.y) {
+			if (b1.maxs.y > b2.mins.y) return true;
+		}
+		else if (b2.maxs.y > b1.mins.y) return true;
+	}
+	return false;
+/*
+	if (b1.mins.y > b2.mins.y) { 
+		if (b1.mins.y < b2.maxs.y) b1MinY = true;
+	}
+	else if (b2.mins.y < b1.maxs.y) b2MinY = true;
+
+	if (b1.maxs.y < b2.maxs.y) {
+		if (b1.maxs.y > b2.mins.y) b1MaxY = true;
+	}
+	else if (b2.maxs.y > b1.mins.y) b2MaxY = true;*/
+
+
+
+	/*if (b1.mins.x > b2.mins.x) {
+		if(b1.mins.x < b2.maxs.x) b1MinX = true;
+	}
+	else if (b2.mins.x < b1.maxs.x) b2MinX = true;
+
+	if (b1.maxs.x < b2.maxs.x) {
+		if (b1.maxs.x > b2.mins.x) b1MaxX = true;
+	}
+	else if (b2.maxs.x > b1.mins.x) b2MaxX = true;
+
+	if (b1.mins.y > b2.mins.y) {
+		if (b1.mins.y < b2.maxs.y) b1MinY = true;
+	}
+	else if (b2.mins.y < b1.maxs.y) b2MinY = true;
+
+	if (b1.maxs.y < b2.maxs.y) {
+		if (b1.maxs.y > b2.mins.y) b1MaxY = true;
+	}
+	else if (b2.maxs.y > b1.mins.y) b2MaxY = true;*/
+
+
+}
 
 void Scene::handleAtacks() {	//comprova si esta atacant cada enemic i ens golpeja si estem a la seva hitbox
 	if (skeleton->atacking)
 	{
-		
+		if (colision(skeleton->hitBox, heavyBandit->hurtBox));
 	}
 }
 
@@ -92,6 +182,17 @@ void Scene::render()
 	//player->render();
 	skeleton->render();
 	heavyBandit->render();
+
+	//Debug
+	//glm::vec2 geom[2] = { skeleton->hitBox.mins, skeleton->hitBox.maxs };
+	//glm::vec2 geom[2] = {glm::ivec2(400,0), glm::ivec2(850,550), };
+
+	//glm::vec2 texCoords[2] = { glm::vec2(0.f, 0.f), glm::vec2(1.f, 1.f) };
+
+	//TexturedQuad* HB = TexturedQuad::createTexturedQuad(geom, texCoords, texProgram);
+	//Texture text;
+	//text.loadFromFile("images/Red.png", TEXTURE_PIXEL_FORMAT_RGBA);
+	//HB->render(text);
 }
 
 void Scene::initShaders()
