@@ -65,7 +65,10 @@ void Scene::update(int deltaTime)
 	//int maxOffsetX = float(SCREEN_WIDTH) + map->getMapSize().x+64; //TODO dependre el maxim offset de la camara del tamany de tile i personatge
 	//cameraOffsetX = (cameraOffsetX < maxOffsetX)?cameraOffsetX : maxOffsetX; //el maxim
 	//projection = glm::ortho(0.f + cameraOffsetX, float(SCREEN_WIDTH) + cameraOffsetX, float(SCREEN_HEIGHT - 1), 0.f);
-	if (Game::instance().getKey('h')) skeleton->hit();
+	if (Game::instance().getKey('h')) {
+		skeleton->hit();
+		heavyBandit->hit();
+	}
 	handleAtacks();
 	
 }
@@ -163,7 +166,7 @@ bool colision(box b1, box b2) {
 void Scene::handleAtacks() {	//comprova si esta atacant cada enemic i ens golpeja si estem a la seva hitbox
 	if (skeleton->atacking)
 	{
-		if (colision(skeleton->hitBox, heavyBandit->hurtBox));
+		if (colision(skeleton->hitBox, heavyBandit->calcHurtBox())) heavyBandit->hit();
 	}
 }
 

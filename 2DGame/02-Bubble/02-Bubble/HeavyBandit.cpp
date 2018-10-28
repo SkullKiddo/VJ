@@ -20,13 +20,13 @@ void HeavyBandit::hit() {
 		vulnerable = false;
 		if (lifes > 1) {
 			lifes--;
-			if (sprite->animation() > 4) sprite->changeAnimation(HIT_RIGHT);
+			if (dreta) sprite->changeAnimation(HIT_RIGHT);
 			else sprite->changeAnimation(HIT_LEFT);
 		}
 		else {
 			lifes = 0;
 			alive = false;
-			if (sprite->animation() > 4) sprite->changeAnimation(DIE_RIGHT);
+			if (dreta) sprite->changeAnimation(DIE_RIGHT);
 			else sprite->changeAnimation(DIE_LEFT);
 
 		}
@@ -37,7 +37,7 @@ void HeavyBandit::init(const glm::ivec2 &posInicial, ShaderProgram &shaderProgra
 	//pos = tileMapPos;
 	vulnerable = false;
 	alive = true;
-	lifes = 3;
+	lifes = 99;
 	size = glm::ivec2(43 * 3, 37 * 3);
 	colisionBox.x = size.x;
 	colisionBox.y = (size.y) / 48.0f;				//37 perque te 37 pixels i vull que sigui nomes un pixel de ample
@@ -87,7 +87,7 @@ void HeavyBandit::update(int deltaTime)
 
 	sprite->update(deltaTime);
 	int anim = sprite->animation();
-	bool dreta = anim > 4;
+	dreta = anim > 4;
 	if (sprite->finished()) vulnerable = true;
 	if (alive) {
 		if (sprite->finished() || (anim != HIT_LEFT && anim != HIT_RIGHT && anim != ATACK_LEFT && anim != ATACK_RIGHT)) {
@@ -168,6 +168,16 @@ void HeavyBandit::setTileMap(TileMap *tileMap)
 void HeavyBandit::setPosition()
 {
 	sprite->setPosition(glm::vec2(float(pos.x), float(pos.y)));
+}
+
+box HeavyBandit::calcHurtBox()
+{
+	box hurtBox;//depen de l'sprite haura de ser diferent per dreta o esquerra
+	
+	hurtBox.mins = glm::ivec2(pos.x + colisionOffset.x, pos.y + (size.y/2.f));
+	hurtBox.maxs = glm::ivec2(pos.x + size.x - colisionOffset.x,pos.y + size.y);
+	
+	return hurtBox;
 }
 
 void HeavyBandit::render()

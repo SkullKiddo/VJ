@@ -18,7 +18,7 @@ public:
 	void setPosition();
 	glm::ivec2 pos;
 	box hitBox;
-	box hurtBox;
+	box calcHurtBox();
 
 
 
@@ -35,6 +35,7 @@ private:
 	glm::ivec2 colisionBox;
 	glm::ivec2 tileMapDispl;
 	glm::ivec2  colisionOffset;
+	bool dreta;
 };
 
 #endif

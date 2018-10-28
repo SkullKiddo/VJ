@@ -24,19 +24,27 @@ public:
 
 
 private:
+	//dibuixar
 	Texture spritesheet;
 	Sprite *sprite;
+
+	//dades
 	bool alive;
 	int lifes;
 	bool vulnerable;
+
+	//atacar
 	bool chargingAtack;
 	float timeChargingAtack;
-	TileMap *map;
+	glm::ivec2 hitBoxOffset;
+
+	//tamanys
 	glm::ivec2 sizeSkeleton;
 	glm::ivec2 colisionBox;
 	glm::ivec2 tileMapDispl;
 	glm::ivec2 colisionOffset;
-	glm::ivec2 hitBoxOffset;
+
+	TileMap *map;
 };
 
 #endif

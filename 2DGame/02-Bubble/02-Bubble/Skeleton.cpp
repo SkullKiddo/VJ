@@ -90,7 +90,7 @@ void Skeleton::update(int deltaTime)
 {
 
 	sprite->update(deltaTime);
-	atacking = false;
+	atacking = false; //HA DE SER FALSE
 	int anim = sprite->animation();
 	bool dreta = anim % 2 == 0;
 	if (sprite->finished()) vulnerable = true;
@@ -164,7 +164,7 @@ void Skeleton::update(int deltaTime)
 		}
 	}
 	if (chargingAtack) timeChargingAtack += deltaTime;
-	//if (timeChargingAtack == atackChargingTime) {
+	if (timeChargingAtack > atackChargingTime) {
 		atacking = true;
 		if (dreta) {
 			hitBox.mins = glm::ivec2(posSkeleton.x+sizeSkeleton.x-hitBoxOffset.x, posSkeleton.y); //no foto offsets ni res perque ocupa tota la vertical
@@ -174,12 +174,9 @@ void Skeleton::update(int deltaTime)
 			hitBox.mins = glm::ivec2(posSkeleton.x+hitBoxOffset.x, posSkeleton.y);
 			hitBox.maxs = glm::ivec2(posSkeleton.x, posSkeleton.y+sizeSkeleton.y);
 		}
-		
+		chargingAtack = false;
 		timeChargingAtack = 0.f;
-		atacking = false;
-		
-
-	//}
+	}
 	setPosition();
 }
 
