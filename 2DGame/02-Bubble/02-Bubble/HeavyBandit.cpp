@@ -38,7 +38,6 @@ void HeavyBandit::hit() {
 }
 
 void HeavyBandit::init(const glm::ivec2 &posInicial, ShaderProgram &shaderProgram) {
-	//pos = tileMapPos;
 	vulnerable = false;
 	alive = true;
 	lifes = 99;
@@ -66,25 +65,8 @@ void HeavyBandit::init(const glm::ivec2 &posInicial, ShaderProgram &shaderProgra
 			sprite->addKeyframe(i, glm::vec2(ANCH_FRAME * (8 - 1 - j), ALT_FRAME * i));
 	}
 
-	//sprite->setAnimationSpeed(HIT_LEFT, MOVEMENT_SPEED);
-	//for (int j = 0; j < 8; j++)
-	//	sprite->addKeyframe(HIT_LEFT, glm::vec2(ANCH_FRAME * j, ALT_FRAME * IDDLE_LEFT));
-
-	//sprite->setAnimationSpeed(HIT_RIGHT, MOVEMENT_SPEED);
-	//for (int j = 0; j < 8; j++)
-	//	sprite->addKeyframe(HIT_RIGHT, glm::vec2(ANCH_FRAME * j, ALT_FRAME * IDDLE_RIGHT));
-
-	//sprite->setAnimationSpeed(DIEDEDED_RIGHT, MOVEMENT_SPEED);
-	//sprite->addKeyframe(DIEDEDED_RIGHT, glm::vec2(ANCH_FRAME * 14, ALT_FRAME * 4));
-
-	//sprite->setAnimationSpeed(DIEDEDED_LEFT, MOVEMENT_SPEED);
-	//sprite->addKeyframe(DIEDEDED_LEFT, glm::vec2(ANCH_FRAME * 0, ALT_FRAME * 5));
-
-
 	sprite->changeAnimation(MOVE_LEFT);
-	//tileMapDispl = tileMapPos;
 	sprite->setPosition(glm::vec2(pos.x, pos.y));
-	//setPosition();
 }
 
 void HeavyBandit::update(int deltaTime)
@@ -184,29 +166,4 @@ void HeavyBandit::update(int deltaTime)
 	}*/
 
 	setPosition();
-}
-
-void HeavyBandit::setTileMap(TileMap *tileMap)
-{
-	map = tileMap;
-}
-
-void HeavyBandit::setPosition()
-{
-	sprite->setPosition(glm::vec2(float(pos.x), float(pos.y)));
-}
-
-box HeavyBandit::calcHurtBox()
-{
-	box hurtBox;//depen de l'sprite haura de ser diferent per dreta o esquerra
-	
-	hurtBox.mins = glm::ivec2(pos.x + colisionOffset.x, pos.y + (size.y/2.f));
-	hurtBox.maxs = glm::ivec2(pos.x + size.x - colisionOffset.x,pos.y + size.y);
-	
-	return hurtBox;
-}
-
-void HeavyBandit::render()
-{
-	sprite->render();
 }

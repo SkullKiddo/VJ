@@ -3,6 +3,7 @@
 #include <glm/gtc/matrix_transform.hpp>
 #include "Scene.h"
 #include "Game.h"
+#include <algorithm>
 
 
 #define SCREEN_X 0
@@ -15,18 +16,19 @@
 Scene::Scene()
 {
 	map = NULL;
-	player = NULL;
-	skeleton = NULL;
+	for (Enemy *enemy : enemies) {
+		enemy = NULL;
+	}
 }
 
 Scene::~Scene()
 {
 	if(map != NULL)
 		delete map;
-	if(player != NULL)
-		delete player;
-	if (skeleton != NULL)
-		delete skeleton;
+
+	for (Enemy *enemy : enemies) {
+		if (enemy != NULL) delete enemy;
+	}
 }
 
 
@@ -34,22 +36,20 @@ void Scene::init()
 {
 	initShaders();
 	setBackground("Background/Arena.png");
-	map = TileMap::createTileMap("levels/Arena_collision.txt", glm::vec2(SCREEN_X, SCREEN_Y), texProgram); //"levels/cuevaLava.txt"     "levels/level01.txt" //TODO pasarli a create map una imatge de background
-	//Background back = Background("images/rocks.jpeg",texProgram,glm::vec2(0.f,0.f));
-	/*player = new Player(); /DESCOMENTAR A PLAYER FARA QUE CAIGUI INFINITAMENT FINS A SORTIRSE DEL MAP I PROVOCAR UN FALLO DE LECTURA AL COMPROVAR COLISIONS
-	player->init(glm::ivec2(SCREEN_X, SCREEN_Y), texProgram);
-	player->setPosition(glm::vec2(INIT_PLAYER_X_TILES * map->getTileSize(), INIT_PLAYER_Y_TILES * map->getTileSize()));
-	player->setTileMap(map);*/
+	map = TileMap::createTileMap("levels/Arena_collision.txt", glm::vec2(SCREEN_X, SCREEN_Y), texProgram);
 	projection = glm::ortho(0.f, float(SCREEN_WIDTH), float(SCREEN_HEIGHT), 0.f);
 	currentTime = 0.0f;
 
-	skeleton = new Skeleton();
-	skeleton->init(glm::ivec2(SCREEN_WIDTH/2, SCREEN_HEIGHT/2), texProgram);
-	skeleton->setTileMap(map);
 
-	heavyBandit = new HeavyBandit();
-	heavyBandit->init(glm::ivec2(SCREEN_WIDTH / 2, SCREEN_HEIGHT / 2), texProgram);
-	heavyBandit->setTileMap(map);
+
+	enemies[0] = new Skeleton();
+	enemies[0]->init(glm::ivec2(SCREEN_WIDTH / 2, SCREEN_HEIGHT / 2), texProgram);
+	enemies[1] = new HeavyBandit();
+	enemies[1]->init(glm::ivec2(SCREEN_WIDTH / 2, SCREEN_HEIGHT / 2), texProgram);
+
+	for (int i = 0; i < NUM_ENEMIES; i++) {
+		enemies[i]->setTileMap(map);
+	}
 
 
 
@@ -59,15 +59,17 @@ void Scene::update(int deltaTime)
 {
 	currentTime += deltaTime;
 	//player->update(deltaTime);
-	skeleton->update(deltaTime);
-	heavyBandit->update(deltaTime);
+	for (Enemy *enemy : enemies) {
+		enemy->update(deltaTime);
+	}
 	//float cameraOffsetX = -20 + player->posPlayer.x;
 	//int maxOffsetX = float(SCREEN_WIDTH) + map->getMapSize().x+64; //TODO dependre el maxim offset de la camara del tamany de tile i personatge
 	//cameraOffsetX = (cameraOffsetX < maxOffsetX)?cameraOffsetX : maxOffsetX; //el maxim
 	//projection = glm::ortho(0.f + cameraOffsetX, float(SCREEN_WIDTH) + cameraOffsetX, float(SCREEN_HEIGHT - 1), 0.f);
 	if (Game::instance().getKey('h')) {
-		skeleton->hit();
-		heavyBandit->hit();
+		for (Enemy *enemy : enemies) {
+			enemy->hit();
+		}
 	}
 	handleAtacks();
 	
@@ -164,8 +166,17 @@ bool colision(box b1, box b2) {
 }
 
 void Scene::handleAtacks() {	//comprova si esta atacant cada enemic i ens golpeja si estem a la seva hitbox
+	auto skeleton = enemies[0];
+	auto heavyBandit = enemies[1];
 	if (skeleton->atacking && (colision(skeleton->hitBox, heavyBandit->calcHurtBox())))	heavyBandit->hit();
 	if (heavyBandit->atacking && colision(heavyBandit->hitBox, skeleton->calcHurtBox()))	skeleton->hit();
+}
+
+bool cmp(const Enemy* e1, const Enemy* e2) {
+	int y1 = e1->pos.y + e1->size.y;
+	int y2 = e2->pos.y + e2->size.y;
+
+	return y1 < y2;
 }
 
 void Scene::render()
@@ -180,11 +191,15 @@ void Scene::render()
 	texProgram.setUniform2f("texCoordDispl", 0.f, 0.f);
 	background->render(texs);
 	if (bcollision) map->render();
-	//player->render();
-	skeleton->render();
-	heavyBandit->render();
+	auto e1 = enemies[0];
 
-	//Debug
+	std::vector<Enemy*> myvector(enemies, enemies + NUM_ENEMIES);	//funciona, no preguntis
+	std::sort(myvector.begin(), myvector.end(), cmp);
+	for (Enemy *enemy : myvector) {
+		enemy->render();
+	}
+
+	//Debug pero no va
 	//glm::vec2 geom[2] = { skeleton->hitBox.mins, skeleton->hitBox.maxs };
 	//glm::vec2 geom[2] = {glm::ivec2(400,0), glm::ivec2(850,550), };
 

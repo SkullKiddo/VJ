@@ -1,6 +1,8 @@
 #ifndef _SCENE_INCLUDE
 #define _SCENE_INCLUDE
 
+#define NUM_ENEMIES 2
+
 
 #include <glm/glm.hpp>
 #include "ShaderProgram.h"
@@ -39,9 +41,7 @@ private:
 private:
 	TileMap *map;
 	Maps mapping;
-	Player *player;
-	Skeleton *skeleton;
-	HeavyBandit *heavyBandit;
+	Enemy *enemies[NUM_ENEMIES];
 	ShaderProgram texProgram;
 	float currentTime;
 	glm::mat4 projection;

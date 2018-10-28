@@ -183,27 +183,13 @@ void Skeleton::update(int deltaTime)
 	setPosition();
 }
 
-void Skeleton::setTileMap(TileMap *tileMap)
-{
-	map = tileMap;
-}
 
-void Skeleton::setPosition()
-{
-	sprite->setPosition(glm::vec2(float( pos.x), float(pos.y)));
-}
 
-box Skeleton::calcHurtBox()
-{
-	box hurtBox;//depen de l'sprite potser haura de ser diferent per dreta o esquerra
 
-	hurtBox.mins = glm::ivec2(pos.x + colisionOffset.x, pos.y + (size.y / 3.f));
-	hurtBox.maxs = glm::ivec2(pos.x + size.x - colisionOffset.x, pos.y + size.y);
 
-	return hurtBox;
-}
 
-void Skeleton::render()
-{
-	sprite->render();
-}
+
+//void Skeleton::render()
+//{
+//	sprite->render();
+//}
