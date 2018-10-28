@@ -1,14 +1,18 @@
-﻿  HeavyBandit.cpp
-c:\users\gabri\desktop\vj\2dgame\02-bubble\02-bubble\heavybandit.cpp(43): warning C4244: '=': conversión de 'float' a 'T'; posible pérdida de datos
+﻿  Skeleton.cpp
+c:\users\gabri\desktop\vj\2dgame\02-bubble\02-bubble\skeleton.cpp(53): warning C4244: '=': conversión de 'float' a 'T'; posible pérdida de datos
           with
           [
               T=int
           ]
-c:\users\gabri\desktop\vj\2dgame\02-bubble\02-bubble\heavybandit.cpp(44): warning C4244: '=': conversión de 'float' a 'T'; posible pérdida de datos
+c:\users\gabri\desktop\vj\2dgame\02-bubble\02-bubble\skeleton.cpp(54): warning C4244: '=': conversión de 'float' a 'T'; posible pérdida de datos
           with
           [
               T=int
           ]
+c:\users\gabri\desktop\vj\2dgame\02-bubble\02-bubble\skeleton.cpp(65): warning C4244: 'argumento': conversión de 'float' a 'int'; posible pérdida de datos
+c:\users\gabri\desktop\vj\2dgame\02-bubble\02-bubble\skeleton.cpp(71): warning C4244: 'argumento': conversión de 'float' a 'int'; posible pérdida de datos
+c:\users\gabri\desktop\vj\2dgame\02-bubble\02-bubble\skeleton.cpp(76): warning C4244: 'argumento': conversión de 'float' a 'int'; posible pérdida de datos
+c:\users\gabri\desktop\vj\2dgame\02-bubble\02-bubble\skeleton.cpp(79): warning C4244: 'argumento': conversión de 'float' a 'int'; posible pérdida de datos
 SOIL.lib(image_DXT.obj) : warning LNK4099: no se encontró PDB 'vc100.pdb' con 'SOIL.lib(image_DXT.obj)' o en 'C:\Users\Gabri\Desktop\vj\2DGame\02-Bubble\Debug\vc100.pdb'; se vinculará el objeto sin tener en cuenta información de depuración
 SOIL.lib(image_helper.obj) : warning LNK4099: no se encontró PDB 'vc100.pdb' con 'SOIL.lib(image_helper.obj)' o en 'C:\Users\Gabri\Desktop\vj\2DGame\02-Bubble\Debug\vc100.pdb'; se vinculará el objeto sin tener en cuenta información de depuración
 SOIL.lib(SOIL.obj) : warning LNK4099: no se encontró PDB 'vc100.pdb' con 'SOIL.lib(SOIL.obj)' o en 'C:\Users\Gabri\Desktop\vj\2DGame\02-Bubble\Debug\vc100.pdb'; se vinculará el objeto sin tener en cuenta información de depuración

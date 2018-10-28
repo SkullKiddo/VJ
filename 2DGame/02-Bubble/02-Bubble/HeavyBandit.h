@@ -19,6 +19,7 @@ public:
 	glm::ivec2 pos;
 	box hitBox;
 	box calcHurtBox();
+	bool atacking;
 
 
 
@@ -36,6 +37,12 @@ private:
 	glm::ivec2 tileMapDispl;
 	glm::ivec2  colisionOffset;
 	bool dreta;
+
+	//atacar
+	bool chargingAtack;
+	float timeChargingAtack;
+	glm::ivec2 hitBoxOffset;
+
 };
 
 #endif

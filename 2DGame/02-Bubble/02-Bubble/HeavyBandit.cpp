@@ -7,8 +7,12 @@
 #include <Mmsystem.h>
 
 #define MOVEMENT_SPEED 8
-#define altframe 1.f/10.f
-#define anchframe 1.f/8.f
+#define ALT_FRAME 1.f/10.f
+#define ANCH_FRAME 1.f/8.f
+#define ALT_FRAME_PIXELS 48.f
+#define ANCH_FRAME_PIXELS 51.f
+#define ATACK_CHARGING_TIME (1000.f/MOVEMENT_SPEED) *4.f //aqui nomes s'ha de substituir el 4 per el num de frames que hagi d'esperar abans d'atacar
+
 
 enum PlayerAnims
 {
@@ -40,40 +44,41 @@ void HeavyBandit::init(const glm::ivec2 &posInicial, ShaderProgram &shaderProgra
 	lifes = 99;
 	size = glm::ivec2(43 * 3, 37 * 3);
 	colisionBox.x = size.x;
-	colisionBox.y = (size.y) / 48.0f;				//37 perque te 37 pixels i vull que sigui nomes un pixel de ample
-	colisionOffset.x = (size.x *16.0f) / 51.0f;		//21 son els pixels que em sobren per davant i 68 el total
+	colisionBox.y = (size.y) / ALT_FRAME_PIXELS;				//37 perque te 37 pixels i vull que sigui nomes un pixel de ample
+	colisionOffset.x = (size.x *16.0f) / ANCH_FRAME_PIXELS;		//21 son els pixels que em sobren per davant i 68 el total
 	colisionOffset.y = (size.y) - colisionBox.y;	//aixo esta bé mentre es recolzi al terra per la part mes baixa (que en principi sera aixi amb tot personatge)
 	pos = posInicial;
+	timeChargingAtack = 0.f;
 	spritesheet.loadFromFile("images/HeavyBandit.png", TEXTURE_PIXEL_FORMAT_RGBA);
 	spritesheet.setMagFilter(GL_NEAREST);
-	sprite = Sprite::createSprite(size, glm::vec2(anchframe, altframe), &spritesheet, &shaderProgram);
+	sprite = Sprite::createSprite(size, glm::vec2(ANCH_FRAME, ALT_FRAME), &spritesheet, &shaderProgram);
 	sprite->setNumberAnimations(20);
 
 	for (int i = 0; i < 5; i ++) {
 		sprite->setAnimationSpeed(i, MOVEMENT_SPEED);
 		for (int j = 0; j < 8; j++)
-			sprite->addKeyframe(i, glm::vec2(anchframe * j, altframe * i));
+			sprite->addKeyframe(i, glm::vec2(ANCH_FRAME * j, ALT_FRAME * i));
 	}
 
 	for (int i = 5; i < 10; i ++) {
 		sprite->setAnimationSpeed(i, MOVEMENT_SPEED);
 		for (int j = 0; j < 8; j++)
-			sprite->addKeyframe(i, glm::vec2(anchframe * (8 - 1 - j), altframe * i));
+			sprite->addKeyframe(i, glm::vec2(ANCH_FRAME * (8 - 1 - j), ALT_FRAME * i));
 	}
 
 	//sprite->setAnimationSpeed(HIT_LEFT, MOVEMENT_SPEED);
 	//for (int j = 0; j < 8; j++)
-	//	sprite->addKeyframe(HIT_LEFT, glm::vec2(anchframe * j, altframe * IDDLE_LEFT));
+	//	sprite->addKeyframe(HIT_LEFT, glm::vec2(ANCH_FRAME * j, ALT_FRAME * IDDLE_LEFT));
 
 	//sprite->setAnimationSpeed(HIT_RIGHT, MOVEMENT_SPEED);
 	//for (int j = 0; j < 8; j++)
-	//	sprite->addKeyframe(HIT_RIGHT, glm::vec2(anchframe * j, altframe * IDDLE_RIGHT));
+	//	sprite->addKeyframe(HIT_RIGHT, glm::vec2(ANCH_FRAME * j, ALT_FRAME * IDDLE_RIGHT));
 
 	//sprite->setAnimationSpeed(DIEDEDED_RIGHT, MOVEMENT_SPEED);
-	//sprite->addKeyframe(DIEDEDED_RIGHT, glm::vec2(anchframe * 14, altframe * 4));
+	//sprite->addKeyframe(DIEDEDED_RIGHT, glm::vec2(ANCH_FRAME * 14, ALT_FRAME * 4));
 
 	//sprite->setAnimationSpeed(DIEDEDED_LEFT, MOVEMENT_SPEED);
-	//sprite->addKeyframe(DIEDEDED_LEFT, glm::vec2(anchframe * 0, altframe * 5));
+	//sprite->addKeyframe(DIEDEDED_LEFT, glm::vec2(ANCH_FRAME * 0, ALT_FRAME * 5));
 
 
 	sprite->changeAnimation(MOVE_LEFT);
@@ -86,6 +91,7 @@ void HeavyBandit::update(int deltaTime)
 {
 
 	sprite->update(deltaTime);
+	atacking = false;
 	int anim = sprite->animation();
 	dreta = anim > 4;
 	if (sprite->finished()) vulnerable = true;
@@ -93,8 +99,9 @@ void HeavyBandit::update(int deltaTime)
 		if (sprite->finished() || (anim != HIT_LEFT && anim != HIT_RIGHT && anim != ATACK_LEFT && anim != ATACK_RIGHT)) {
 			auto initialPos = pos;
 
-			if (Game::instance().getKey('b')) {
+			if (Game::instance().getKey('x')) {
 				//PlaySound(TEXT("audio/axeSwingCutre.wav"), NULL, SND_FILENAME | SND_ASYNC | SND_NODEFAULT | SND_NOSTOP);
+				chargingAtack = true;
 				mciSendString(L"play audio/axeSwingCutre.wav", NULL, 0, NULL);
 				if (dreta) sprite->changeAnimation(ATACK_RIGHT);
 				else sprite->changeAnimation(ATACK_LEFT);
@@ -147,6 +154,25 @@ void HeavyBandit::update(int deltaTime)
 			if (initialPos == pos && anim != IDDLE_LEFT && anim != IDDLE_RIGHT) {
 				if (dreta) sprite->changeAnimation(IDDLE_RIGHT);
 				else sprite->changeAnimation(IDDLE_LEFT);
+			}
+		}
+		if (chargingAtack) {
+			timeChargingAtack += deltaTime;
+			if (timeChargingAtack > ATACK_CHARGING_TIME) {
+				mciSendString(L"play audio/axeSwingCutre.wav", NULL, 0, NULL);
+				atacking = true;
+				int ymin = pos.y + (3*size.y)/ALT_FRAME_PIXELS;
+				int ymax = pos.y + size.y - (9*size.y)/ALT_FRAME_PIXELS;
+				if (dreta) {
+					hitBox.mins = glm::ivec2(pos.x + colisionOffset.x, ymin); //no foto offsets ni res perque ocupa tota la vertical
+					hitBox.maxs = glm::ivec2(pos.x + size.x, ymax);
+				}
+				else {
+					hitBox.mins = glm::ivec2(pos.x, ymin);
+					hitBox.maxs = glm::ivec2(pos.x + size.x - colisionOffset.x, ymax);
+				}
+				chargingAtack = false;
+				timeChargingAtack = 0.f;
 			}
 		}
 	}

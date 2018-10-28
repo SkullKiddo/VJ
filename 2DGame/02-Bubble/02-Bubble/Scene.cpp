@@ -75,8 +75,8 @@ void Scene::update(int deltaTime)
 
 bool colision(box b1, box b2) {
 	//cada bool indica si el punt descrit esta compres en l'altre capsa en la seva dimensio ex: b1MinX sera true si nomes si b1.mins.x esta entre b2.mins.x i b2.max.x
-	bool b1MinX, b2MinX, b1MaxX, b2MaxX,  b1MinY, b1MaxY, b2MinY, b2MaxY;
-
+	bool b1MinX, b2MinX, b1MaxX, b2MaxX,  b1MinY, b1MaxY, b2MinY, b2MaxY; //DEBUG
+	b1MaxX = true; //DEBUG
 	if (b1.mins.x > b2.mins.x) {
 		if (b1.mins.x < b2.maxs.x) {
 			if (b1.mins.y > b2.mins.y) {
@@ -164,10 +164,8 @@ bool colision(box b1, box b2) {
 }
 
 void Scene::handleAtacks() {	//comprova si esta atacant cada enemic i ens golpeja si estem a la seva hitbox
-	if (skeleton->atacking)
-	{
-		if (colision(skeleton->hitBox, heavyBandit->calcHurtBox())) heavyBandit->hit();
-	}
+	if (skeleton->atacking && (colision(skeleton->hitBox, heavyBandit->calcHurtBox())))	heavyBandit->hit();
+	if (heavyBandit->atacking && colision(heavyBandit->hitBox, skeleton->calcHurtBox()))	skeleton->hit();
 }
 
 void Scene::render()
