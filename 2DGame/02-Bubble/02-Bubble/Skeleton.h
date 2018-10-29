@@ -17,10 +17,6 @@ public:
 	void setTileMap(TileMap *tileMap);
 	void setPosition();
 
-
-
-
-
 private:
 	Texture spritesheet;
 	Sprite *sprite;

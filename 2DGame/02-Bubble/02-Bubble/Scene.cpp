@@ -17,6 +17,7 @@ Scene::Scene()
 	map = NULL;
 	player = NULL;
 	skeleton = NULL;
+	adventurer = NULL;
 }
 
 Scene::~Scene()
@@ -27,8 +28,9 @@ Scene::~Scene()
 		delete player;
 	if (skeleton != NULL)
 		delete skeleton;
+	if (adventurer != NULL)
+		delete adventurer;
 }
-
 
 void Scene::init()
 {
@@ -43,21 +45,25 @@ void Scene::init()
 	projection = glm::ortho(0.f, float(SCREEN_WIDTH), float(SCREEN_HEIGHT), 0.f);
 	currentTime = 0.0f;
 
-	skeleton = new Skeleton();
+	adventurer = new Adventurer();
+	adventurer->init(glm::ivec2(SCREEN_WIDTH / 2, SCREEN_HEIGHT / 2), texProgram);
+	adventurer->setTileMap(map);
+	/*skeleton = new Skeleton();
 	skeleton->init(glm::ivec2(SCREEN_WIDTH/2, SCREEN_HEIGHT/2), texProgram);
-	skeleton->setTileMap(map);
+	skeleton->setTileMap(map);*/
 }
 
 void Scene::update(int deltaTime)
 {
 	currentTime += deltaTime;
 	//player->update(deltaTime);
-	skeleton->update(deltaTime);
+	//skeleton->update(deltaTime);
+	adventurer->update(deltaTime);
 	//float cameraOffsetX = -20 + player->posPlayer.x;
 	//int maxOffsetX = float(SCREEN_WIDTH) + map->getMapSize().x+64; //TODO dependre el maxim offset de la camara del tamany de tile i personatge
 	//cameraOffsetX = (cameraOffsetX < maxOffsetX)?cameraOffsetX : maxOffsetX; //el maxim
 	//projection = glm::ortho(0.f + cameraOffsetX, float(SCREEN_WIDTH) + cameraOffsetX, float(SCREEN_HEIGHT - 1), 0.f);
-	if (Game::instance().getKey('h')) skeleton->hit();
+	//if (Game::instance().getKey('h')) skeleton->hit();
 }
 
 void Scene::render()
@@ -73,7 +79,8 @@ void Scene::render()
 	background->render(texs);
 	if (bcollision) map->render();
 	//player->render();
-	skeleton->render();
+	//skeleton->render();
+	adventurer->render();
 }
 
 void Scene::initShaders()

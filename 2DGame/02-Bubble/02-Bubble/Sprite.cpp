@@ -31,6 +31,7 @@ Sprite::Sprite(const glm::vec2 &quadSize, const glm::vec2 &sizeInSpritesheet, Te
 	texture = spritesheet;
 	shaderProgram = program;
 	currentAnimation = -1;
+	lastAnim = -1;
 	position = glm::vec2(0.f);
 }
 
@@ -92,6 +93,7 @@ void Sprite::changeAnimation(int animId)
 	if(animId < int(animations.size()))
 	{
 		finishedAnim = false;
+		if (currentAnimation != animId) lastAnim = currentAnimation;  
 		currentAnimation = animId;
 		currentKeyframe = 0;
 		timeAnimation = 0.f;
@@ -102,6 +104,11 @@ void Sprite::changeAnimation(int animId)
 int Sprite::animation() const
 {
 	return currentAnimation;
+}
+
+int Sprite::previousAnimation() const
+{
+	return lastAnim;
 }
 
 void Sprite::setPosition(const glm::vec2 &pos)

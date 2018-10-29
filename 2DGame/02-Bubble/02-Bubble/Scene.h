@@ -7,6 +7,7 @@
 #include "TileMap.h"
 #include "Player.h"
 #include "Skeleton.h"
+#include "Adventurer.h"
 #include "TexturedQuad.h"
 #include "Texture.h"
 
@@ -40,6 +41,7 @@ private:
 	Maps mapping;
 	Player *player;
 	Skeleton *skeleton;
+	Adventurer *adventurer;
 	ShaderProgram texProgram;
 	float currentTime;
 	glm::mat4 projection;
