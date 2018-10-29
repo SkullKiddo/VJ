@@ -1,6 +1,8 @@
 #include <GL/glew.h>
 #include <GL/glut.h>
 #include "Game.h"
+#include <Mmsystem.h>
+#include <iostream>
 
 
 void Game::init()
@@ -8,6 +10,7 @@ void Game::init()
 	bPlay = true;
 	glClearColor(0.3f, 0.3f, 0.3f, 1.0f);
 	scene.init();
+	PlaySound(TEXT("audio/cyka.wav"), NULL, SND_FILENAME | SND_ASYNC | SND_LOOP | SND_NODEFAULT);
 }
 
 bool Game::update(int deltaTime)
