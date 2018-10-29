@@ -143,16 +143,7 @@ void HeavyBandit::update(int deltaTime)
 			if (timeChargingAtack > ATACK_CHARGING_TIME) {
 				mciSendString(L"play audio/axeSwingCutre.wav", NULL, 0, NULL);
 				atacking = true;
-				int ymin = pos.y + (3*size.y)/ALT_FRAME_PIXELS;
-				int ymax = pos.y + size.y - (9*size.y)/ALT_FRAME_PIXELS;
-				if (dreta) {
-					hitBox.mins = glm::ivec2(pos.x + colisionOffset.x, ymin); //no foto offsets ni res perque ocupa tota la vertical
-					hitBox.maxs = glm::ivec2(pos.x + size.x, ymax);
-				}
-				else {
-					hitBox.mins = glm::ivec2(pos.x, ymin);
-					hitBox.maxs = glm::ivec2(pos.x + size.x - colisionOffset.x, ymax);
-				}
+				
 				chargingAtack = false;
 				timeChargingAtack = 0.f;
 			}
@@ -166,4 +157,19 @@ void HeavyBandit::update(int deltaTime)
 	}*/
 
 	setPosition();
+}
+
+box HeavyBandit::hitBox() {
+	int ymin = pos.y + (3 * size.y) / ALT_FRAME_PIXELS;
+	int ymax = pos.y + size.y - (9 * size.y) / ALT_FRAME_PIXELS;
+	box hitBox;
+	if (dreta) {
+		hitBox.mins = glm::ivec2(pos.x + colisionOffset.x, ymin); //no foto offsets ni res perque ocupa tota la vertical
+		hitBox.maxs = glm::ivec2(pos.x + size.x, ymax);
+	}
+	else {
+		hitBox.mins = glm::ivec2(pos.x, ymin);
+		hitBox.maxs = glm::ivec2(pos.x + size.x - colisionOffset.x, ymax);
+	}
+	return hitBox;
 }

@@ -41,7 +41,7 @@ void Scene::init()
 	currentTime = 0.0f;
 
 
-
+	//inicialitzar enemics
 	enemies[0] = new Skeleton();
 	enemies[0]->init(glm::ivec2(SCREEN_WIDTH / 2, SCREEN_HEIGHT / 2), texProgram);
 	enemies[1] = new HeavyBandit();
@@ -51,21 +51,16 @@ void Scene::init()
 		enemies[i]->setTileMap(map);
 	}
 
-
-
+	//asignar objectius
+	enemies[0]->target = enemies[1];
 }
 
 void Scene::update(int deltaTime)
 {
 	currentTime += deltaTime;
-	//player->update(deltaTime);
 	for (Enemy *enemy : enemies) {
 		enemy->update(deltaTime);
 	}
-	//float cameraOffsetX = -20 + player->posPlayer.x;
-	//int maxOffsetX = float(SCREEN_WIDTH) + map->getMapSize().x+64; //TODO dependre el maxim offset de la camara del tamany de tile i personatge
-	//cameraOffsetX = (cameraOffsetX < maxOffsetX)?cameraOffsetX : maxOffsetX; //el maxim
-	//projection = glm::ortho(0.f + cameraOffsetX, float(SCREEN_WIDTH) + cameraOffsetX, float(SCREEN_HEIGHT - 1), 0.f);
 	if (Game::instance().getKey('h')) {
 		for (Enemy *enemy : enemies) {
 			enemy->hit();
@@ -75,101 +70,11 @@ void Scene::update(int deltaTime)
 	
 }
 
-bool colision(box b1, box b2) {
-	//cada bool indica si el punt descrit esta compres en l'altre capsa en la seva dimensio ex: b1MinX sera true si nomes si b1.mins.x esta entre b2.mins.x i b2.max.x
-	bool b1MinX, b2MinX, b1MaxX, b2MaxX,  b1MinY, b1MaxY, b2MinY, b2MaxY; //DEBUG
-	b1MaxX = true; //DEBUG
-	if (b1.mins.x > b2.mins.x) {
-		if (b1.mins.x < b2.maxs.x) {
-			if (b1.mins.y > b2.mins.y) {
-				return true;
-			}
-			else if (b2.mins.y < b1.maxs.y) return true;
-
-			if (b1.maxs.y < b2.maxs.y) {
-				if (b1.maxs.y > b2.mins.y) return true;
-			}
-			else if (b2.maxs.y > b1.mins.y) return true;
-		}
-	}
-	else if (b2.mins.x < b1.maxs.x) {
-		if (b1.mins.y > b2.mins.y) {
-			if (b1.mins.y < b2.maxs.y) return true;
-		}
-		else if (b2.mins.y < b1.maxs.y) return true;
-
-		if (b1.maxs.y < b2.maxs.y) {
-			if (b1.maxs.y > b2.mins.y) return true;
-		}
-		else if (b2.maxs.y > b1.mins.y) return true;
-	}
-
-	if (b1.maxs.x < b2.maxs.x) {
-		if (b1.maxs.x > b2.mins.x) {
-			if (b1.mins.y > b2.mins.y) {
-				if (b1.mins.y < b2.maxs.y) return true;
-			}
-			else if (b2.mins.y < b1.maxs.y) return true;
-
-			if (b1.maxs.y < b2.maxs.y) {
-				if (b1.maxs.y > b2.mins.y) return true;
-			}
-			else if (b2.maxs.y > b1.mins.y) return true;
-		}
-	}
-	else if (b2.maxs.x > b1.mins.x) {
-		if (b1.mins.y > b2.mins.y) {
-			if (b1.mins.y < b2.maxs.y) return true;
-		}
-		else if (b2.mins.y < b1.maxs.y) return true;
-
-		if (b1.maxs.y < b2.maxs.y) {
-			if (b1.maxs.y > b2.mins.y) return true;
-		}
-		else if (b2.maxs.y > b1.mins.y) return true;
-	}
-	return false;
-/*
-	if (b1.mins.y > b2.mins.y) { 
-		if (b1.mins.y < b2.maxs.y) b1MinY = true;
-	}
-	else if (b2.mins.y < b1.maxs.y) b2MinY = true;
-
-	if (b1.maxs.y < b2.maxs.y) {
-		if (b1.maxs.y > b2.mins.y) b1MaxY = true;
-	}
-	else if (b2.maxs.y > b1.mins.y) b2MaxY = true;*/
-
-
-
-	/*if (b1.mins.x > b2.mins.x) {
-		if(b1.mins.x < b2.maxs.x) b1MinX = true;
-	}
-	else if (b2.mins.x < b1.maxs.x) b2MinX = true;
-
-	if (b1.maxs.x < b2.maxs.x) {
-		if (b1.maxs.x > b2.mins.x) b1MaxX = true;
-	}
-	else if (b2.maxs.x > b1.mins.x) b2MaxX = true;
-
-	if (b1.mins.y > b2.mins.y) {
-		if (b1.mins.y < b2.maxs.y) b1MinY = true;
-	}
-	else if (b2.mins.y < b1.maxs.y) b2MinY = true;
-
-	if (b1.maxs.y < b2.maxs.y) {
-		if (b1.maxs.y > b2.mins.y) b1MaxY = true;
-	}
-	else if (b2.maxs.y > b1.mins.y) b2MaxY = true;*/
-
-
-}
-
 void Scene::handleAtacks() {	//comprova si esta atacant cada enemic i ens golpeja si estem a la seva hitbox
 	auto skeleton = enemies[0];
 	auto heavyBandit = enemies[1];
-	if (skeleton->atacking && (colision(skeleton->hitBox, heavyBandit->calcHurtBox())))	heavyBandit->hit();
-	if (heavyBandit->atacking && colision(heavyBandit->hitBox, skeleton->calcHurtBox()))	skeleton->hit();
+	if (skeleton->atacking && skeleton->canHit(heavyBandit))	heavyBandit->hit();
+	if (heavyBandit->atacking && heavyBandit->canHit(skeleton))	skeleton->hit();
 }
 
 bool cmp(const Enemy* e1, const Enemy* e2) {

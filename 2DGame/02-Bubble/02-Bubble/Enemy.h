@@ -6,22 +6,29 @@
 class Enemy
 {
 public:
+	//definides
 	void render();
+	box hurtBox();
+	void setPosition();
+	void setTileMap(TileMap *tileMap);
+	bool canHit(Enemy* target);
+
+	//virtuals
 	virtual void init(const glm::ivec2 &tileMapPos, ShaderProgram &shaderProgram) {};
 	virtual void update(int deltaTime) {};
 	virtual void hit() {};
-	box calcHurtBox();
-	void setPosition();
-	void setTileMap(TileMap *tileMap);
-
+	virtual box hitBox();
 
 	//attributes
 	bool atacking;
-	box hitBox;
 	glm::ivec2 pos;
 	glm::ivec2 size;
+	Enemy* target;
 
 protected:
+
+
+
 	//dibuixar
 	Sprite *sprite;
 	Texture spritesheet;
@@ -30,7 +37,16 @@ protected:
 	bool alive;
 	int lifes;
 	bool vulnerable;
+	int speed;
 	bool dreta;
+
+	//IA
+	bool moveUp;
+	bool moveDown;
+	bool moveLeft;
+	bool moveRight;
+	bool atackTarguet;
+	void killTarget(); //actualitza els bools per moures cap al taget o atacar
 
 	//atacar
 	bool chargingAtack;
