@@ -1,9 +1,9 @@
 #ifndef _SKELETON_INCLUDE
 #define _SKELETON_INCLUDE
 
-#include "Enemy.h"
+#include "Character.h"
 
-class Skeleton : public Enemy
+class Skeleton : public Character
 {
 public:
 

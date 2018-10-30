@@ -1,9 +1,9 @@
 #ifndef _HBANDIT_INCLUDE
 #define _HBANDIT_INCLUDE
 
-#include "Enemy.h"
+#include "Character.h"
 
-class HeavyBandit : public Enemy
+class HeavyBandit : public Character
 {
 public:
 

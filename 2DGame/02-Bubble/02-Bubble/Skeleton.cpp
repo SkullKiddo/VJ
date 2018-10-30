@@ -27,6 +27,7 @@ int skeletonAnimSize[] = {18,4,15,11,8,13};
 
 void Skeleton::hit() {
 	if (vulnerable && alive) {
+		chargingAtack = false;
 		vulnerable = false;
 		if (lifes > 1) {
 			lifes--;

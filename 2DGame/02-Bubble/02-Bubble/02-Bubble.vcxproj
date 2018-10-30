@@ -11,8 +11,9 @@
     </ProjectConfiguration>
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="Adventurer.h" />
     <ClInclude Include="AnimKeyframes.h" />
-    <ClInclude Include="Enemy.h" />
+    <ClInclude Include="Character.h" />
     <ClInclude Include="Game.h" />
     <ClInclude Include="HeavyBandit.h" />
     <ClInclude Include="LightBandit.h" />
@@ -26,7 +27,8 @@
     <ClInclude Include="TileMap.h" />
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="Enemy.cpp" />
+    <ClCompile Include="Adventurer.cpp" />
+    <ClCompile Include="Character.cpp" />
     <ClCompile Include="Game.cpp" />
     <ClCompile Include="HeavyBandit.cpp" />
     <ClCompile Include="LightBandit.cpp" />

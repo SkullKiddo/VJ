@@ -21,6 +21,7 @@ enum PlayerAnims
 
 void HeavyBandit::hit() {
 	if (vulnerable && alive) {
+		chargingAtack = false;
 		vulnerable = false;
 		if (lifes > 1) {
 			lifes--;
@@ -71,7 +72,7 @@ void HeavyBandit::init(const glm::ivec2 &posInicial, ShaderProgram &shaderProgra
 
 void HeavyBandit::update(int deltaTime)
 {
-
+	killTarget();
 	sprite->update(deltaTime);
 	atacking = false;
 	int anim = sprite->animation();
@@ -81,14 +82,14 @@ void HeavyBandit::update(int deltaTime)
 		if (sprite->finished() || (anim != HIT_LEFT && anim != HIT_RIGHT && anim != ATACK_LEFT && anim != ATACK_RIGHT)) {
 			auto initialPos = pos;
 
-			if (Game::instance().getKey('x')) {
+			if (atackTarguet) {
 				//PlaySound(TEXT("audio/axeSwingCutre.wav"), NULL, SND_FILENAME | SND_ASYNC | SND_NODEFAULT | SND_NOSTOP);
 				chargingAtack = true;
 				mciSendString(L"play audio/axeSwingCutre.wav", NULL, 0, NULL);
 				if (dreta) sprite->changeAnimation(ATACK_RIGHT);
 				else sprite->changeAnimation(ATACK_LEFT);
 			}
-			else if (Game::instance().getKey('d'))
+			else if (moveRight)
 			{
 
 				pos.x += 1;
@@ -99,7 +100,7 @@ void HeavyBandit::update(int deltaTime)
 				else if (anim != MOVE_RIGHT)
 					sprite->changeAnimation(MOVE_RIGHT);
 			}
-			else if (Game::instance().getKey('a'))
+			else if (moveLeft)
 			{
 				pos.x -= 1;
 				if (map->collisionMoveLeft(pos, colisionBox, colisionOffset))
@@ -109,7 +110,7 @@ void HeavyBandit::update(int deltaTime)
 				else if (anim != MOVE_LEFT)
 					sprite->changeAnimation(MOVE_LEFT);
 			}
-			if (Game::instance().getKey('s'))
+			if (moveDown)
 			{
 				pos.y += 1;
 				if (map->collisionMoveDown(pos, colisionBox, colisionOffset))
@@ -121,7 +122,7 @@ void HeavyBandit::update(int deltaTime)
 					else sprite->changeAnimation(MOVE_RIGHT);
 				}
 			}
-			else if (Game::instance().getKey('w'))
+			else if (moveUp)
 			{
 				pos.y -= 1;
 				if (map->collisionMoveUp(pos, colisionBox, colisionOffset))
