@@ -41,9 +41,11 @@ void Sprite::update(int deltaTime)
 	if(currentAnimation >= 0)
 	{
 		timeAnimation += deltaTime;
-		if (currentKeyframe == animations[currentAnimation].keyframeDispl.size()-1) finishedAnim = true;
-		if(!(finishedAnim && infinita) && timeAnimation > animations[currentAnimation].millisecsPerKeyframe) //aixo abans era un while dunno why
+		bool acabat = false;
+		if(currentKeyframe == animations[currentAnimation].keyframeDispl.size()-1) acabat = true;
+		while(!(acabat && infinita) && timeAnimation > animations[currentAnimation].millisecsPerKeyframe) //aixo abans era un while dunno why
 		{
+			if (currentKeyframe == animations[currentAnimation].keyframeDispl.size() - 1) finishedAnim = true;
 			timeAnimation -= animations[currentAnimation].millisecsPerKeyframe;
 			currentKeyframe = (currentKeyframe + 1) % animations[currentAnimation].keyframeDispl.size();
 		}

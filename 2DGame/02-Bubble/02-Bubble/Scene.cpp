@@ -80,7 +80,7 @@ void Scene::update(int deltaTime)
 	//projection = glm::ortho(0.f + cameraOffsetX, float(SCREEN_WIDTH) + cameraOffsetX, float(SCREEN_HEIGHT - 1), 0.f);
 	
 	if (Game::instance().getKey('h')) {
-		adventurer->hit();
+		player->hit();
 		for (Character* enemy: enemies) {
 			enemy->hit();
 		}
