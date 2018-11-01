@@ -36,13 +36,16 @@ Scene::~Scene()
 void Scene::init()
 {
 	initShaders();
-	setBackground("Background/Arena.png");
+	setBackground("Background/white.jpg");
 	map = TileMap::createTileMap("levels/Arena_collision.txt", glm::vec2(SCREEN_X, SCREEN_Y), texProgram);
 	projection = glm::ortho(0.f, float(SCREEN_WIDTH), float(SCREEN_HEIGHT), 0.f);
 	currentTime = 0.0f;
 
-	adventurer = new Adventurer();
-	adventurer->init(glm::ivec2(SCREEN_WIDTH / 2, SCREEN_HEIGHT / 2), texProgram);
+
+	//inicialitzar enemics
+	player = new Knight();
+
+	player->init(glm::ivec2(SCREEN_WIDTH / 2, SCREEN_HEIGHT / 2), texProgram);
 	enemies[0] = new Skeleton();
 	enemies[0]->init(glm::ivec2(SCREEN_WIDTH / 2, SCREEN_HEIGHT / 2), texProgram);
 	enemies[1] = new HeavyBandit();
@@ -51,11 +54,11 @@ void Scene::init()
 	for (int i = 0; i < NUM_ENEMIES; i++) {
 		enemies[i]->setTileMap(map);
 	}
-	adventurer->setTileMap(map);
+	player->setTileMap(map);
 
 	//asignar objectius
 	for (Character* enemy : enemies) {
-		enemy->target = adventurer;
+		enemy->target = player;
 	}
 }
 
@@ -78,11 +81,11 @@ void Scene::update(int deltaTime)
 	
 	if (Game::instance().getKey('h')) {
 		adventurer->hit();
-		for (Character *enemy : enemies) {
+		for (Character* enemy: enemies) {
 			enemy->hit();
 		}
 	}
-	adventurer->update(deltaTime);
+	player->update(deltaTime);
 	handleAtacks();
 	
 }
@@ -179,8 +182,8 @@ bool colision(box b1, box b2) {
 
 void Scene::handleAtacks() {	//comprova si esta atacant cada enemic i ens golpeja si estem a la seva hitbox
 	for (Character *enemy : enemies) {
-		if (adventurer->atacking && adventurer->canHit(enemy)) enemy->hit();
-		//if (enemy->atacking && enemy->canHit(adventurer)) adventurer->hit();
+		if (player->attacking && player->canHit(enemy)) enemy->hit();
+		//if (enemy->attacking && enemy->canHit(player)) player->hit();
 	}
 }
 
@@ -210,7 +213,7 @@ void Scene::render()
 	for (Character *character : myvector) {
 		character->render();
 	}
-	adventurer->render();
+	player->render();
 
 	//Debug pero no va
 	//glm::vec2 geom[2] = { skeleton->hitBox.mins, skeleton->hitBox.maxs };

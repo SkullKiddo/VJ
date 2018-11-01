@@ -41,11 +41,10 @@ void Sprite::update(int deltaTime)
 	if(currentAnimation >= 0)
 	{
 		timeAnimation += deltaTime;
-		while(timeAnimation > animations[currentAnimation].millisecsPerKeyframe)
+		if (currentKeyframe == animations[currentAnimation].keyframeDispl.size()-1) finishedAnim = true;
+		if(!(finishedAnim && infinita) && timeAnimation > animations[currentAnimation].millisecsPerKeyframe) //aixo abans era un while dunno why
 		{
 			timeAnimation -= animations[currentAnimation].millisecsPerKeyframe;
-			if (currentKeyframe == animations[currentAnimation].keyframeDispl.size()-1)
-				finishedAnim = true;
 			currentKeyframe = (currentKeyframe + 1) % animations[currentAnimation].keyframeDispl.size();
 		}
 		texCoordDispl = animations[currentAnimation].keyframeDispl[currentKeyframe];
@@ -91,6 +90,7 @@ void Sprite::addKeyframe(int animId, const glm::vec2 &displacement)
 
 void Sprite::changeAnimation(int animId)
 {
+	infinita = false;
 	if(animId < int(animations.size()))
 	{
 		finishedAnim = false;
@@ -122,5 +122,6 @@ bool Sprite::finished()
 	return finishedAnim;
 }
 
-
-
+void Sprite::stay() {
+	infinita = true;
+}

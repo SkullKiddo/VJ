@@ -40,6 +40,7 @@ public:
 	
 	void setPosition(const glm::vec2 &pos);
 	bool finished(); //diu si la animacio ha acabat
+	void stay(); //fa que la animacio es mantingui en el seu ultim frame fins que la cambiin
 
 private:
 	Texture *texture;
@@ -54,6 +55,7 @@ private:
 	glm::vec2 texCoordDispl;
 	vector<AnimKeyframes> animations;
 	bool finishedAnim;
+	bool infinita = false;
 
 };
 

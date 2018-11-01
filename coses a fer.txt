@@ -1,0 +1,2 @@
+Acabar d'ajustar hitbox i hurtbox per cada personatge (ara suposa que el espai per davant i per darrrere es el mateix i que la hitbox es tot l'espai de davant del sprite)
+Millorar IA

@@ -13,6 +13,7 @@
 #include "Texture.h"
 #include "HeavyBandit.h"
 #include "Adventurer.h"
+#include "Knight.h"
 
 // Scene contains all the entities of our game.
 // It is responsible for updating and render them.
@@ -22,6 +23,13 @@ struct Maps
 	TileMap *map;
 	TileMap *collisions;
 };
+
+struct caractersInitialData
+{
+	int caracterType;
+	glm::ivec2 pos;
+};
+
 
 class Scene
 {
@@ -44,7 +52,7 @@ private:
 private:
 	TileMap *map;
 	Maps mapping;
-	Adventurer* adventurer;
+	Character* player;
 	Character *enemies[NUM_ENEMIES];
 	ShaderProgram texProgram;
 	float currentTime;

@@ -3,6 +3,7 @@
 #include "Sprite.h"
 #include "TileMap.h"
 
+
 class Character
 {
 public:
@@ -20,7 +21,7 @@ public:
 	virtual box hitBox();
 
 	//attributes
-	bool atacking;
+	bool attacking;
 	glm::ivec2 pos;
 	glm::ivec2 size;
 	Character* target;
@@ -45,12 +46,12 @@ protected:
 	bool moveDown;
 	bool moveLeft;
 	bool moveRight;
-	bool atackTarguet;
+	bool attackTarguet;
 	void killTarget(); //actualitza els bools per moures cap al taget o atacar
 
 	//atacar
-	bool chargingAtack;
-	float timeChargingAtack;
+	bool chargingAttack;
+	float timeChargingAttack;
 	glm::ivec2 hitBoxOffset;
 
 	//tamanys
