@@ -40,8 +40,6 @@ void Scene::init()
 	projection = glm::ortho(0.f, float(SCREEN_WIDTH), float(SCREEN_HEIGHT), 0.f);
 	currentTime = 0.0f;
 
-
-
 	enemies[0] = new Skeleton();
 	enemies[0]->init(glm::ivec2(SCREEN_WIDTH / 2, SCREEN_HEIGHT / 2), texProgram);
 	enemies[1] = new HeavyBandit();
@@ -50,13 +48,14 @@ void Scene::init()
 	for (int i = 0; i < NUM_ENEMIES; i++) {
 		enemies[i]->setTileMap(map);
 	}
-
-
-
 }
 
 void Scene::update(int deltaTime)
 {
+	if (Game::instance().getKey(27)) {
+		escape = true;
+	}
+
 	currentTime += deltaTime;
 	//player->update(deltaTime);
 	for (Enemy *enemy : enemies) {
@@ -251,6 +250,14 @@ void Scene::setBackground(const string &filename) {
 
 void Scene::setCollsion() {
 	bcollision = !bcollision;
+}
+
+void Scene::keepPlaying() {
+	escape = false;
+}
+
+bool Scene::getEscape() {
+	return escape;
 }
 
 

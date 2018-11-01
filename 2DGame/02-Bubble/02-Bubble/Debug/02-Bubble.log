@@ -1,13 +1,35 @@
-﻿  Scene.cpp
-c:\users\gabri\desktop\vj\2dgame\02-bubble\02-bubble\scene.cpp(80): warning C4101: 'b2MinY': variable local sin referencia
-c:\users\gabri\desktop\vj\2dgame\02-bubble\02-bubble\scene.cpp(80): warning C4101: 'b1MinY': variable local sin referencia
-c:\users\gabri\desktop\vj\2dgame\02-bubble\02-bubble\scene.cpp(80): warning C4101: 'b2MinX': variable local sin referencia
-c:\users\gabri\desktop\vj\2dgame\02-bubble\02-bubble\scene.cpp(80): warning C4101: 'b1MaxY': variable local sin referencia
-c:\users\gabri\desktop\vj\2dgame\02-bubble\02-bubble\scene.cpp(80): warning C4101: 'b1MinX': variable local sin referencia
-c:\users\gabri\desktop\vj\2dgame\02-bubble\02-bubble\scene.cpp(80): warning C4101: 'b2MaxX': variable local sin referencia
-c:\users\gabri\desktop\vj\2dgame\02-bubble\02-bubble\scene.cpp(80): warning C4101: 'b2MaxY': variable local sin referencia
-SOIL.lib(image_DXT.obj) : warning LNK4099: no se encontró PDB 'vc100.pdb' con 'SOIL.lib(image_DXT.obj)' o en 'C:\Users\Gabri\Desktop\vj\2DGame\02-Bubble\Debug\vc100.pdb'; se vinculará el objeto sin tener en cuenta información de depuración
-SOIL.lib(image_helper.obj) : warning LNK4099: no se encontró PDB 'vc100.pdb' con 'SOIL.lib(image_helper.obj)' o en 'C:\Users\Gabri\Desktop\vj\2DGame\02-Bubble\Debug\vc100.pdb'; se vinculará el objeto sin tener en cuenta información de depuración
-SOIL.lib(SOIL.obj) : warning LNK4099: no se encontró PDB 'vc100.pdb' con 'SOIL.lib(SOIL.obj)' o en 'C:\Users\Gabri\Desktop\vj\2DGame\02-Bubble\Debug\vc100.pdb'; se vinculará el objeto sin tener en cuenta información de depuración
-SOIL.lib(stb_image_aug.obj) : warning LNK4099: no se encontró PDB 'vc100.pdb' con 'SOIL.lib(stb_image_aug.obj)' o en 'C:\Users\Gabri\Desktop\vj\2DGame\02-Bubble\Debug\vc100.pdb'; se vinculará el objeto sin tener en cuenta información de depuración
-  02-Bubble.vcxproj -> C:\Users\Gabri\Desktop\vj\2DGame\02-Bubble\Debug\02-Bubble.exe
+﻿  Menu.cpp
+  Game.cpp
+  Generando código...
+  Compilando...
+  main.cpp
+  Skeleton.cpp
+c:\users\miki1\desktop\vj\2dgame\02-bubble\02-bubble\skeleton.cpp(54): warning C4244: '=': conversión de 'float' a 'int'; posible pérdida de datos
+c:\users\miki1\desktop\vj\2dgame\02-bubble\02-bubble\skeleton.cpp(55): warning C4244: '=': conversión de 'float' a 'int'; posible pérdida de datos
+c:\users\miki1\desktop\vj\2dgame\02-bubble\02-bubble\skeleton.cpp(66): warning C4244: 'argumento': conversión de 'float' a 'int'; posible pérdida de datos
+c:\users\miki1\desktop\vj\2dgame\02-bubble\02-bubble\skeleton.cpp(72): warning C4244: 'argumento': conversión de 'float' a 'int'; posible pérdida de datos
+c:\users\miki1\desktop\vj\2dgame\02-bubble\02-bubble\skeleton.cpp(77): warning C4244: 'argumento': conversión de 'float' a 'int'; posible pérdida de datos
+c:\users\miki1\desktop\vj\2dgame\02-bubble\02-bubble\skeleton.cpp(80): warning C4244: 'argumento': conversión de 'float' a 'int'; posible pérdida de datos
+  Scene.cpp
+c:\users\miki1\desktop\vj\2dgame\02-bubble\02-bubble\scene.cpp(79): warning C4101: 'b2MinY': variable local sin referencia
+c:\users\miki1\desktop\vj\2dgame\02-bubble\02-bubble\scene.cpp(79): warning C4101: 'b1MinY': variable local sin referencia
+c:\users\miki1\desktop\vj\2dgame\02-bubble\02-bubble\scene.cpp(79): warning C4101: 'b2MinX': variable local sin referencia
+c:\users\miki1\desktop\vj\2dgame\02-bubble\02-bubble\scene.cpp(79): warning C4101: 'b1MaxY': variable local sin referencia
+c:\users\miki1\desktop\vj\2dgame\02-bubble\02-bubble\scene.cpp(79): warning C4101: 'b1MinX': variable local sin referencia
+c:\users\miki1\desktop\vj\2dgame\02-bubble\02-bubble\scene.cpp(79): warning C4101: 'b2MaxX': variable local sin referencia
+c:\users\miki1\desktop\vj\2dgame\02-bubble\02-bubble\scene.cpp(79): warning C4101: 'b2MaxY': variable local sin referencia
+  LightBandit.cpp
+c:\users\miki1\desktop\vj\2dgame\02-bubble\02-bubble\lightbandit.cpp(43): warning C4244: '=': conversión de 'float' a 'int'; posible pérdida de datos
+c:\users\miki1\desktop\vj\2dgame\02-bubble\02-bubble\lightbandit.cpp(44): warning C4244: '=': conversión de 'float' a 'int'; posible pérdida de datos
+  HeavyBandit.cpp
+c:\users\miki1\desktop\vj\2dgame\02-bubble\02-bubble\heavybandit.cpp(46): warning C4244: '=': conversión de 'float' a 'int'; posible pérdida de datos
+c:\users\miki1\desktop\vj\2dgame\02-bubble\02-bubble\heavybandit.cpp(47): warning C4244: '=': conversión de 'float' a 'int'; posible pérdida de datos
+c:\users\miki1\desktop\vj\2dgame\02-bubble\02-bubble\heavybandit.cpp(146): warning C4244: 'inicializando': conversión de 'float' a 'int'; posible pérdida de datos
+c:\users\miki1\desktop\vj\2dgame\02-bubble\02-bubble\heavybandit.cpp(147): warning C4244: 'inicializando': conversión de 'float' a 'int'; posible pérdida de datos
+  Adventurer.cpp
+  Generando código...
+SOIL.lib(image_DXT.obj) : warning LNK4099: no se encontró PDB 'vc100.pdb' con 'SOIL.lib(image_DXT.obj)' o en 'C:\Users\miki1\Desktop\VJ\2DGame\02-Bubble\Debug\vc100.pdb'; se vinculará el objeto sin tener en cuenta información de depuración
+SOIL.lib(image_helper.obj) : warning LNK4099: no se encontró PDB 'vc100.pdb' con 'SOIL.lib(image_helper.obj)' o en 'C:\Users\miki1\Desktop\VJ\2DGame\02-Bubble\Debug\vc100.pdb'; se vinculará el objeto sin tener en cuenta información de depuración
+SOIL.lib(SOIL.obj) : warning LNK4099: no se encontró PDB 'vc100.pdb' con 'SOIL.lib(SOIL.obj)' o en 'C:\Users\miki1\Desktop\VJ\2DGame\02-Bubble\Debug\vc100.pdb'; se vinculará el objeto sin tener en cuenta información de depuración
+SOIL.lib(stb_image_aug.obj) : warning LNK4099: no se encontró PDB 'vc100.pdb' con 'SOIL.lib(stb_image_aug.obj)' o en 'C:\Users\miki1\Desktop\VJ\2DGame\02-Bubble\Debug\vc100.pdb'; se vinculará el objeto sin tener en cuenta información de depuración
+  02-Bubble.vcxproj -> C:\Users\miki1\Desktop\VJ\2DGame\02-Bubble\Debug\02-Bubble.exe

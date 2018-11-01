@@ -34,6 +34,8 @@ public:
 	void render();
 	void setBackground(const string &filename);
 	void setCollsion();
+	bool getEscape();
+	void keepPlaying();
 
 private:
 	void initShaders();
@@ -49,6 +51,8 @@ private:
 	Texture texs;
 	TexturedQuad *background;
 	bool bcollision = false;
+	bool escape = false;
+	bool first = false;
 	void handleAtacks();
 };
 

@@ -3,6 +3,7 @@
 
 
 #include "Scene.h"
+#include "Menu.h"
 
 
 #define SCREEN_WIDTH 1680	
@@ -43,7 +44,9 @@ public:
 	bool getSpecialKey(int key) const;
 
 private:
-	bool bPlay;                       // Continue to play game?
+	bool bPlay;						  // Continue to play game?
+	bool first;
+	Menu menu;						  // Game Menu
 	Scene scene;                      // Scene to render
 	bool keys[256], specialKeys[256]; // Store key states so that 
 	                                  // we can have access at any time

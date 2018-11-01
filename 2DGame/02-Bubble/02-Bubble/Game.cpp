@@ -10,26 +10,40 @@ void Game::init()
 	bPlay = true;
 	glClearColor(0.3f, 0.3f, 0.3f, 1.0f);
 	scene.init();
+	menu.init();
 	PlaySound(TEXT("audio/cyka.wav"), NULL, SND_FILENAME | SND_ASYNC | SND_LOOP | SND_NODEFAULT);
 }
 
 bool Game::update(int deltaTime)
 {
-	scene.update(deltaTime);
+	if (menu.getPlaying()) {
+		if (first) { //El primer cop que iniciem o fem resum hem de posar que no volem tornar a sortir de la partida
+			scene.keepPlaying();
+			first = false;
+			scene.update(deltaTime);
+		}
+		else if (!scene.getEscape()) scene.update(deltaTime); //si no volem pausar el joc seguim jugant
+		else menu.stopPlaying();  //si volem pausar el joc deixem d'actualitzar-lo i passem al menú
+	}
+	else {
+		menu.update(deltaTime); //si no volem iniciar partida ens quedem al menú
+		first = true;
+	}
 	
+	if (menu.getExit()) bPlay = false; //si cliquem exit des del menu sortim del joc
+
 	return bPlay;
 }
 
 void Game::render()
 {
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-	scene.render();
+	if (menu.getPlaying()) scene.render(); //Si estem jugant renderitzem la partida, sino el menu
+	else menu.render();
 }
 
 void Game::keyPressed(int key)
 {
-	if(key == 27) // Escape code
-		bPlay = false;
 	keys[key] = true;
 	if (key == 'c') // Activar mapa de colisiones
 		scene.setCollsion();
