@@ -16,7 +16,8 @@
 Scene::Scene()
 {
 	map = NULL;
-	for (Enemy *enemy : enemies) {
+	
+	for (Character *enemy : enemies) {
 		enemy = NULL;
 	}
 }
@@ -25,8 +26,8 @@ Scene::~Scene()
 {
 	if(map != NULL)
 		delete map;
-
-	for (Enemy *enemy : enemies) {
+	
+	for (Character *enemy : enemies) {
 		if (enemy != NULL) delete enemy;
 	}
 }
@@ -40,6 +41,8 @@ void Scene::init()
 	projection = glm::ortho(0.f, float(SCREEN_WIDTH), float(SCREEN_HEIGHT), 0.f);
 	currentTime = 0.0f;
 
+	adventurer = new Adventurer();
+	adventurer->init(glm::ivec2(SCREEN_WIDTH / 2, SCREEN_HEIGHT / 2), texProgram);
 	enemies[0] = new Skeleton();
 	enemies[0]->init(glm::ivec2(SCREEN_WIDTH / 2, SCREEN_HEIGHT / 2), texProgram);
 	enemies[1] = new HeavyBandit();
@@ -47,6 +50,12 @@ void Scene::init()
 
 	for (int i = 0; i < NUM_ENEMIES; i++) {
 		enemies[i]->setTileMap(map);
+	}
+	adventurer->setTileMap(map);
+
+	//asignar objectius
+	for (Character* enemy : enemies) {
+		enemy->target = adventurer;
 	}
 }
 
@@ -58,18 +67,22 @@ void Scene::update(int deltaTime)
 
 	currentTime += deltaTime;
 	//player->update(deltaTime);
-	for (Enemy *enemy : enemies) {
+	
+	for (Character *enemy : enemies) {
 		enemy->update(deltaTime);
 	}
 	//float cameraOffsetX = -20 + player->posPlayer.x;
 	//int maxOffsetX = float(SCREEN_WIDTH) + map->getMapSize().x+64; //TODO dependre el maxim offset de la camara del tamany de tile i personatge
 	//cameraOffsetX = (cameraOffsetX < maxOffsetX)?cameraOffsetX : maxOffsetX; //el maxim
 	//projection = glm::ortho(0.f + cameraOffsetX, float(SCREEN_WIDTH) + cameraOffsetX, float(SCREEN_HEIGHT - 1), 0.f);
+	
 	if (Game::instance().getKey('h')) {
-		for (Enemy *enemy : enemies) {
+		adventurer->hit();
+		for (Character *enemy : enemies) {
 			enemy->hit();
 		}
 	}
+	adventurer->update(deltaTime);
 	handleAtacks();
 	
 }
@@ -165,13 +178,13 @@ bool colision(box b1, box b2) {
 }
 
 void Scene::handleAtacks() {	//comprova si esta atacant cada enemic i ens golpeja si estem a la seva hitbox
-	auto skeleton = enemies[0];
-	auto heavyBandit = enemies[1];
-	if (skeleton->atacking && (colision(skeleton->hitBox, heavyBandit->calcHurtBox())))	heavyBandit->hit();
-	if (heavyBandit->atacking && colision(heavyBandit->hitBox, skeleton->calcHurtBox()))	skeleton->hit();
+	for (Character *enemy : enemies) {
+		if (adventurer->atacking && adventurer->canHit(enemy)) enemy->hit();
+		//if (enemy->atacking && enemy->canHit(adventurer)) adventurer->hit();
+	}
 }
 
-bool cmp(const Enemy* e1, const Enemy* e2) {
+bool cmp(const Character *e1, const Character *e2) {
 	int y1 = e1->pos.y + e1->size.y;
 	int y2 = e2->pos.y + e2->size.y;
 
@@ -192,11 +205,12 @@ void Scene::render()
 	if (bcollision) map->render();
 	auto e1 = enemies[0];
 
-	std::vector<Enemy*> myvector(enemies, enemies + NUM_ENEMIES);	//funciona, no preguntis
+	std::vector<Character*> myvector(enemies, enemies + NUM_ENEMIES);    //funciona, no preguntis
 	std::sort(myvector.begin(), myvector.end(), cmp);
-	for (Enemy *enemy : myvector) {
-		enemy->render();
+	for (Character *character : myvector) {
+		character->render();
 	}
+	adventurer->render();
 
 	//Debug pero no va
 	//glm::vec2 geom[2] = { skeleton->hitBox.mins, skeleton->hitBox.maxs };
@@ -204,7 +218,7 @@ void Scene::render()
 
 	//glm::vec2 texCoords[2] = { glm::vec2(0.f, 0.f), glm::vec2(1.f, 1.f) };
 
-	//TexturedQuad* HB = TexturedQuad::createTexturedQuad(geom, texCoords, texProgram);
+	//TexturedQuad *HB = TexturedQuad::createTexturedQuad(geom, texCoords, texProgram);
 	//Texture text;
 	//text.loadFromFile("images/Red.png", TEXTURE_PIXEL_FORMAT_RGBA);
 	//HB->render(text);
@@ -259,6 +273,3 @@ void Scene::keepPlaying() {
 bool Scene::getEscape() {
 	return escape;
 }
-
-
-

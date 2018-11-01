@@ -1,4 +1,20 @@
-﻿  Menu.cpp
+﻿  Scene.cpp
+c:\users\miki1\desktop\vj\2dgame\02-bubble\02-bubble\scene.cpp(92): warning C4101: 'b2MinY': variable local sin referencia
+c:\users\miki1\desktop\vj\2dgame\02-bubble\02-bubble\scene.cpp(92): warning C4101: 'b1MinY': variable local sin referencia
+c:\users\miki1\desktop\vj\2dgame\02-bubble\02-bubble\scene.cpp(92): warning C4101: 'b2MinX': variable local sin referencia
+c:\users\miki1\desktop\vj\2dgame\02-bubble\02-bubble\scene.cpp(92): warning C4101: 'b1MaxY': variable local sin referencia
+c:\users\miki1\desktop\vj\2dgame\02-bubble\02-bubble\scene.cpp(92): warning C4101: 'b1MinX': variable local sin referencia
+c:\users\miki1\desktop\vj\2dgame\02-bubble\02-bubble\scene.cpp(92): warning C4101: 'b2MaxX': variable local sin referencia
+c:\users\miki1\desktop\vj\2dgame\02-bubble\02-bubble\scene.cpp(92): warning C4101: 'b2MaxY': variable local sin referencia
+  Generando código...
+  Omitiendo... (no se detectaron cambios relevantes)
+  main.cpp
+  Skeleton.cpp
+  Menu.cpp
+  LightBandit.cpp
+  HeavyBandit.cpp
+  Game.cpp
+  Adventurer.cpp
 SOIL.lib(image_DXT.obj) : warning LNK4099: no se encontró PDB 'vc100.pdb' con 'SOIL.lib(image_DXT.obj)' o en 'C:\Users\miki1\Desktop\VJ\2DGame\02-Bubble\Debug\vc100.pdb'; se vinculará el objeto sin tener en cuenta información de depuración
 SOIL.lib(image_helper.obj) : warning LNK4099: no se encontró PDB 'vc100.pdb' con 'SOIL.lib(image_helper.obj)' o en 'C:\Users\miki1\Desktop\VJ\2DGame\02-Bubble\Debug\vc100.pdb'; se vinculará el objeto sin tener en cuenta información de depuración
 SOIL.lib(SOIL.obj) : warning LNK4099: no se encontró PDB 'vc100.pdb' con 'SOIL.lib(SOIL.obj)' o en 'C:\Users\miki1\Desktop\VJ\2DGame\02-Bubble\Debug\vc100.pdb'; se vinculará el objeto sin tener en cuenta información de depuración

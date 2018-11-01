@@ -7,7 +7,7 @@
 #include "Game.h"
 #include <algorithm>
 
-#define MOVEMENT_SPEED 7
+#define MOVEMENT_SPEED 8
 #define POSX 0
 #define POSY 0
 
