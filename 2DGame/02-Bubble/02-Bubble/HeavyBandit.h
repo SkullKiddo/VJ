@@ -1,15 +1,16 @@
 #ifndef _HBANDIT_INCLUDE
 #define _HBANDIT_INCLUDE
 
-#include "Enemy.h"
+#include "Character.h"
 
-class HeavyBandit : public Enemy
+class HeavyBandit : public Character
 {
 public:
 
 	void init(const glm::ivec2 &tileMapPos, ShaderProgram &shaderProgram);
 	void update(int deltaTime);
 	void hit();
+	virtual box hitBox();
 };
 
 #endif

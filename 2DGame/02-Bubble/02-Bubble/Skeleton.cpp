@@ -27,6 +27,7 @@ int skeletonAnimSize[] = {18,4,15,11,8,13};
 
 void Skeleton::hit() {
 	if (vulnerable && alive) {
+		chargingAtack = false;
 		vulnerable = false;
 		if (lifes > 1) {
 			lifes--;
@@ -89,7 +90,7 @@ void Skeleton::init(const glm::ivec2 &posInicial, ShaderProgram &shaderProgram) 
 
 void Skeleton::update(int deltaTime)
 {
-
+	killTarget();
 	sprite->update(deltaTime);
 	float debug = ATACK_CHARGING_TIME;
 	atacking = false;
@@ -100,13 +101,13 @@ void Skeleton::update(int deltaTime)
 		if (sprite->finished() || (anim != HIT_LEFT && anim != HIT_RIGHT && anim != ATACK_LEFT && anim != ATACK_RIGHT)) {
 			auto initialPos = pos;
 
-			if (Game::instance().getKey('b')) {
+			if (atackTarguet) {
 				chargingAtack = true;
 				//PlaySound(TEXT("audio/axeSwingCutre.wav"), NULL, SND_FILENAME | SND_ASYNC | SND_NODEFAULT | SND_NOSTOP);
 				if (dreta) sprite->changeAnimation(ATACK_RIGHT);
 				else sprite->changeAnimation(ATACK_LEFT);
 			}
-			else if (Game::instance().getSpecialKey(GLUT_KEY_RIGHT))
+			else if (moveRight)
 			{
 				dreta = true;
 				pos.x += 1;
@@ -117,7 +118,7 @@ void Skeleton::update(int deltaTime)
 				else if (anim != MOVE_RIGHT)
 					sprite->changeAnimation(MOVE_RIGHT);
 			}
-			else if (Game::instance().getSpecialKey(GLUT_KEY_LEFT))
+			else if (moveLeft)
 			{
 				dreta = false;
 				pos.x -= 1;
@@ -128,7 +129,7 @@ void Skeleton::update(int deltaTime)
 				else if (anim != MOVE_LEFT)
 					sprite->changeAnimation(MOVE_LEFT);
 			}
-			if (Game::instance().getSpecialKey(GLUT_KEY_DOWN))
+			if (moveDown)
 			{
 				pos.y += 1;
 				if (map->collisionMoveDown(pos, colisionBox, colisionOffset))
@@ -140,7 +141,7 @@ void Skeleton::update(int deltaTime)
 					else sprite->changeAnimation(MOVE_RIGHT);
 				}
 			}
-			else if (Game::instance().getSpecialKey(GLUT_KEY_UP))
+			else if (moveUp)
 			{
 				pos.y -= 1;
 				if (map->collisionMoveUp(pos, colisionBox, colisionOffset))
@@ -169,19 +170,25 @@ void Skeleton::update(int deltaTime)
 		if (timeChargingAtack > ATACK_CHARGING_TIME) {
 			mciSendString(L"play audio/axeSwingCutre.wav", NULL, 0, NULL);
 			atacking = true;
-			if (dreta) {
-				hitBox.mins = glm::ivec2(pos.x + size.x - colisionOffset.x, pos.y); //no foto offsets ni res perque ocupa tota la vertical
-				hitBox.maxs = glm::ivec2(pos.x + size.x, pos.y + size.y);
-			}
-			else {
-				hitBox.mins = glm::ivec2(pos.x, pos.y);
-				hitBox.maxs = glm::ivec2(pos.x + colisionOffset.x, pos.y + size.y);
-			}
 			chargingAtack = false;
 			timeChargingAtack = 0.f;
 		}
 	}
 	setPosition();
+}
+
+
+box Skeleton::hitBox() {
+	box hitBox;
+	if (dreta) {
+		hitBox.mins = glm::ivec2(pos.x + size.x - colisionOffset.x, pos.y); //no foto offsets ni res perque ocupa tota la vertical
+		hitBox.maxs = glm::ivec2(pos.x + size.x, pos.y + size.y);
+	}
+	else {
+		hitBox.mins = glm::ivec2(pos.x, pos.y);
+		hitBox.maxs = glm::ivec2(pos.x + colisionOffset.x, pos.y + size.y);
+	}
+	return hitBox;
 }
 
 
