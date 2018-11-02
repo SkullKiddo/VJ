@@ -210,10 +210,16 @@ void Scene::render()
 
 	std::vector<Character*> myvector(enemies, enemies + NUM_ENEMIES);    //funciona, no preguntis
 	std::sort(myvector.begin(), myvector.end(), cmp);
+	bool drawnPlayer = false;
 	for (Character *character : myvector) {
+		if (!drawnPlayer && (character->pos.y + character->size.y) > (player->pos.y + player->size.y)) {
+			player->render();
+			drawnPlayer = true;
+		}
 		character->render();
 	}
-	player->render();
+	if (!drawnPlayer) player->render();
+	//player->render();
 
 	//Debug pero no va
 	//glm::vec2 geom[2] = { skeleton->hitBox.mins, skeleton->hitBox.maxs };

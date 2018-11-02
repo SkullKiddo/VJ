@@ -9,11 +9,12 @@ public:
 	void hit();
 	box hitBox();
 	void render();
-private:
-	//ShaderProgram shader;
+//private:
+	ShaderProgram shader;
 	int animSize[6] = {10,3,6,9,6,3};
 	Sprite* projectile;
 	Texture projectileTexture;
+	void initProjectile();
 	void shotProjectile();
 	glm::ivec2 projectilePos;
 	bool projectileShot;

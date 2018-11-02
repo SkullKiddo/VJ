@@ -49,7 +49,8 @@ void Wizard::hit() {
 
 void Wizard::init(const glm::ivec2 &posInicial, ShaderProgram &shaderProgram) {
 
-
+	shader = shaderProgram;
+	initProjectile();
 	//pos = tileMapPos;
 	vulnerable = false;
 	alive = true;
@@ -61,20 +62,7 @@ void Wizard::init(const glm::ivec2 &posInicial, ShaderProgram &shaderProgram) {
 	colisionOffset.y = (size.y) - colisionBox.y;	//aixo esta bé mentre es recolzi al terra per la part mes baixa (que en principi sera aixi amb tot personatge)
 	//hitBoxOffset.y = (size.y * 37.f) / ALT_FRAME_PIXELS; Aixo no em cal perque el ATTACK ocupa tota la vertical del sprite
 	pos = posInicial;
-
-	//INICIALITZACIO PROJECTIL
-	projectileTexture;
-	projectileTexture.loadFromFile("images/projectile.png", TEXTURE_PIXEL_FORMAT_RGBA);
-	projectile = Sprite::createSprite(glm::ivec2(800, 200 / ALT_FRAME_PIXELS), glm::ivec2(0.25, 0.5), &projectileTexture, &shaderProgram);
-	//projectile = Sprite::createSprite(glm::ivec2(20, 10), glm::ivec2(0.25, 0.5), &projectileTexture, &shader);
-	projectile->setNumberAnimations(2);
-	projectile->setAnimationSpeed(RIGHT, PROJECTILE_SPEED);
-	projectile->setAnimationSpeed(LEFT, PROJECTILE_SPEED);
-	for (int j = 0; j < 4; j++) {
-		projectile->addKeyframe(LEFT, glm::vec2(PROJECTILE_ANCH_FRAME * j, PROJECTILE_ALT_FRAME * 0));
-		projectile->addKeyframe(RIGHT, glm::vec2(PROJECTILE_ANCH_FRAME * j, PROJECTILE_ALT_FRAME * 1));
-	}
-
+	
 
 	timeChargingAttack = 0.f;
 	spritesheet.loadFromFile("images/wizard.png", TEXTURE_PIXEL_FORMAT_RGBA);
@@ -121,6 +109,7 @@ void Wizard::update(int deltaTime)
 	int anim = sprite->animation();
 	dreta = anim > 7;
 	if (sprite->finished()) vulnerable = true;
+	projectileShot = true;
 	if (projectileShot) updateProjectile(deltaTime);
 	if (alive) {
 		if (sprite->finished() || (anim != HIT_LEFT && anim != HIT_RIGHT && anim != SHOT_LEFT && anim != SHOT_RIGHT)) {
@@ -217,12 +206,26 @@ box Wizard::hitBox() {
 	return caja;
 }
 
+void Wizard::initProjectile() {
+	projectileTexture;
+	projectileTexture.loadFromFile("images/projectile.png", TEXTURE_PIXEL_FORMAT_RGBA);
+	projectile = Sprite::createSprite(glm::ivec2(800, 200 / ALT_FRAME_PIXELS), glm::ivec2(0.25, 0.5), &projectileTexture, &shader);
+	//projectile = Sprite::createSprite(glm::ivec2(20, 10), glm::ivec2(0.25, 0.5), &projectileTexture, &shader);
+	projectile->setNumberAnimations(2);
+	projectile->setAnimationSpeed(RIGHT, PROJECTILE_SPEED);
+	projectile->setAnimationSpeed(LEFT, PROJECTILE_SPEED);
+	for (int j = 0; j < 4; j++) {
+		projectile->addKeyframe(LEFT, glm::vec2(PROJECTILE_ANCH_FRAME * j, PROJECTILE_ALT_FRAME * 0));
+		projectile->addKeyframe(RIGHT, glm::vec2(PROJECTILE_ANCH_FRAME * j, PROJECTILE_ALT_FRAME * 1));
+	}
+
+}
+
 void Wizard::shotProjectile() {
-	projectileShot = true;
 	if (dreta) projectilePos.x = pos.x + (8*size.x)/ALT_FRAME_PIXELS;
 	else projectilePos.x = pos.x - (74 * size.x) / ALT_FRAME_PIXELS;
 	projectilePos.y = pos.y + (42*size.y)/ANCH_FRAME_PIXELS;
-	projectile->setPosition(projectilePos);
+	//projectile->setPosition(projectilePos);
 	projectile->changeAnimation(LEFT);
 }
 
@@ -231,6 +234,7 @@ void Wizard::updateProjectile(int deltaTime) {
 	projectile->update(deltaTime);
 	if (projectile->animation() == LEFT) projectilePos.x -= 2;
 	else projectilePos.x -= 2;
+	projectilePos = glm::ivec2(400, 400);
 	projectile->setPosition(projectilePos);
 }
 
