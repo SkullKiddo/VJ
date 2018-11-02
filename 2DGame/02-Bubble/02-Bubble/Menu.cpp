@@ -40,8 +40,9 @@ Menu::~ Menu() {}
 
 void Menu::init() {
 
-	play = true;
+	play = false;
 	exit = false;
+	selection = false;
 	initShaders();
 	projection = glm::ortho(0.f, float(SCREEN_WIDTH), float(SCREEN_HEIGHT), 0.f);
 
@@ -311,4 +312,8 @@ void Menu::initShaders() {
 
 int Menu::getChoice() {
 	return choice;
+}
+
+bool Menu::getChosen() {
+	return selection;
 }

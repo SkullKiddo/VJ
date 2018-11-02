@@ -25,6 +25,7 @@ public:
 	bool getPlaying();
 	bool getExit();
 	int getChoice();
+	bool getChosen();
 
 	enum adv_anim { IDLE_ADV };
 	enum greenAdv_anim { IDLE_GREEN_ADV };
@@ -53,9 +54,9 @@ private:
 	Sprite *sprite_knight;
 	Sprite *sprite_sword;
 
-	bool play = false;
-	bool exit = false;
-	bool selection = false;
+	bool play;
+	bool exit;
+	bool selection;
 	bool first = true;
 	int choice = 1;
 

@@ -20,6 +20,7 @@
 #include "Adventurer.h"
 #include "Knight.h"
 #include "Wizard.h"
+#include "Green_Adventurer.h"
 #include "LightBandit.h"
 
 // Scene contains all the entities of our game.
@@ -52,7 +53,9 @@ public:
 	void setCollsion();
 	bool getEscape();
 	void keepPlaying();
+	void setChoice(int choice);
 	int level = 0;
+	int choice = 1;
 
 private:
 	void initShaders();

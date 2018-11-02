@@ -65,7 +65,20 @@ void Scene::init()
 		enemies[1][3]->init(glm::ivec2(SCREEN_WIDTH / 2, SCREEN_HEIGHT -20), texProgram);
 		
 	}
-	player = new Adventurer();
+
+	switch (choice)
+	{
+	case 2: 
+		player = new Adventurer();
+		break;
+	case 3:
+		player = new Green_Adventurer();
+		break;
+	case 1:
+		player = new Knight();
+		break;
+	}
+
 	player->setTileMap(map);
 	player->init(glm::ivec2(SCREEN_WIDTH / 2, SCREEN_HEIGHT / 2), texProgram);
 
@@ -114,10 +127,10 @@ void Scene::update(int deltaTime)
 }
 
 void Scene::handleAtacks() {	//comprova si esta atacant cada enemic i ens golpeja si estem a la seva hitbox
-	for (Character *enemy : enemies[level]) {
-		if (player->attacking && player->canHit(enemy)) enemy->hit();
-		//if (enemy->attacking && enemy->canHit(player)) player->hit();
-	}
+for (Character *enemy : enemies[level]) {
+	if (player->attacking && player->canHit(enemy)) enemy->hit();
+	//if (enemy->attacking && enemy->canHit(player)) player->hit();
+}
 
 }
 
@@ -169,13 +182,13 @@ void Scene::initShaders()
 	Shader vShader, fShader;
 
 	vShader.initFromFile(VERTEX_SHADER, "shaders/texture.vert");
-	if(!vShader.isCompiled())
+	if (!vShader.isCompiled())
 	{
 		cout << "Vertex Shader Error" << endl;
 		cout << "" << vShader.log() << endl << endl;
 	}
 	fShader.initFromFile(FRAGMENT_SHADER, "shaders/texture.frag");
-	if(!fShader.isCompiled())
+	if (!fShader.isCompiled())
 	{
 		cout << "Fragment Shader Error" << endl;
 		cout << "" << fShader.log() << endl << endl;
@@ -184,7 +197,7 @@ void Scene::initShaders()
 	texProgram.addShader(vShader);
 	texProgram.addShader(fShader);
 	texProgram.link();
-	if(!texProgram.isLinked())
+	if (!texProgram.isLinked())
 	{
 		cout << "Shader Linking Error" << endl;
 		cout << "" << texProgram.log() << endl << endl;
@@ -212,4 +225,9 @@ void Scene::keepPlaying() {
 
 bool Scene::getEscape() {
 	return escape;
+}
+
+void Scene::setChoice(int choice) {
+	this->choice = choice;
+	init();
 }

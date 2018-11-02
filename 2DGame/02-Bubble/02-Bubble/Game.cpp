@@ -5,8 +5,9 @@
 #include <iostream>
 
 
-void Game::init()
-{
+void Game::init() {
+
+    chosen = true;
 	bPlay = true;
 	glClearColor(0.3f, 0.3f, 0.3f, 1.0f);
 	menu.init();
@@ -21,7 +22,7 @@ bool Game::update(int deltaTime)
 			chosen = false;
 			scene.setChoice(menu.getChoice());
 		}
-		if (first) { //El primer cop que iniciem o fem resum hem de posar que no volem tornar a sortir de la partida
+		else if (first) { //El primer cop que iniciem o fem resum hem de posar que no volem tornar a sortir de la partida
 			scene.keepPlaying();
 			first = false;
 			scene.update(deltaTime);
