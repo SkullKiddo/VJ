@@ -8,7 +8,7 @@ class Character
 {
 public:
 	//definides
-	void render();
+	virtual void render();
 	box hurtBox();
 	void setPosition();
 	void setTileMap(TileMap *tileMap);
