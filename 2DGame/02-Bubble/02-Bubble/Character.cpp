@@ -40,9 +40,9 @@ void Character::setTileMap(TileMap *tileMap)
 }
 
 void Character::killTarget() {
-	moveUp = moveDown = moveLeft = moveRight = attackTarguet = false;
+	moveUp = moveDown = moveLeft = moveRight = attackTarget = false;
 	if (target != NULL) {
-		if (canHit(target)) attackTarguet = true;
+		if (canHit(target)) attackTarget = true;
 		else {
 			srand(time(0));
 			bool randomBool = rand() % 2;
@@ -59,7 +59,7 @@ void setTarguet() {
 
 bool Character::canHit(Character * target) {
 	box b1, b2;
-	b1 = hitBox();
+ 	b1 = hitBox();
 	b2 = target->hurtBox();
 	if (b1.mins.x > b2.mins.x) {
 		if (b1.mins.x < b2.maxs.x) {

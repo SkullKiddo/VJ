@@ -46,8 +46,8 @@ protected:
 	bool moveDown;
 	bool moveLeft;
 	bool moveRight;
-	bool attackTarguet;
-	void killTarget(); //actualitza els bools per moures cap al taget o atacar
+	bool attackTarget;
+	virtual void killTarget(); //actualitza els bools per moures cap al taget o atacar
 
 	//atacar
 	bool chargingAttack;

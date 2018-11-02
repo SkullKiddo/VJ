@@ -3,7 +3,7 @@
 
 #include "HeavyBandit.h"
 
-class LightBandit //: HeavyBandit
+class LightBandit : public HeavyBandit
 {
 
 public:

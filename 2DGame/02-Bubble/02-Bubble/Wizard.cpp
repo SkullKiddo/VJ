@@ -15,10 +15,11 @@
 #define ANCH_FRAME 1.f/10.f
 #define ALT_FRAME_PIXELS 81.f
 #define ANCH_FRAME_PIXELS 80.f
-#define ATTACK_CHARGING_TIME (1000.f/MOVEMENT_SPEED) *7.f
+#define ATTACK_CHARGING_TIME (1000.f/MOVEMENT_SPEED) *9.f
 #define PROJECTILE_SPEED 10.f
 #define PROJECTILE_ANCH_FRAME 1.f/4.f
 #define PROJECTILE_ALT_FRAME 1.f/2.f
+
 
 
 enum Anims {
@@ -48,14 +49,12 @@ void Wizard::hit() {
 }
 
 void Wizard::init(const glm::ivec2 &posInicial, ShaderProgram &shaderProgram) {
-
-	shader = shaderProgram;
-	initProjectile();
 	//pos = tileMapPos;
 	vulnerable = false;
 	alive = true;
 	lifes = 99;
 	size = glm::ivec2(80, 80);
+	initProjectile(shaderProgram);
 	colisionBox.x = size.x;		//22 es els pixels quefa d'ample el personatge, 68 el tamany total del sprite
 	colisionBox.y = (size.y) / ALT_FRAME_PIXELS;				//37 perque te 37 pixels i vull que sigui nomes un pixel de ample
 	colisionOffset.x = (size.x *26.0f) / ANCH_FRAME_PIXELS;		//21 son els pixels que em sobren per davant i 68 el total
@@ -105,68 +104,51 @@ void Wizard::update(int deltaTime)
 	killTarget();
 	sprite->update(deltaTime);
 	float debug = ATTACK_CHARGING_TIME;
-	attacking = false;
 	int anim = sprite->animation();
 	dreta = anim > 7;
 	if (sprite->finished()) vulnerable = true;
-	projectileShot = true;
 	if (projectileShot) updateProjectile(deltaTime);
 	if (alive) {
 		if (sprite->finished() || (anim != HIT_LEFT && anim != HIT_RIGHT && anim != SHOT_LEFT && anim != SHOT_RIGHT)) {
 			auto initialPos = pos;
 
-			if (Game::instance().getKey('a')) {
-				attacking = true;
-				//PlaySound(TEXT("audio/axeSwingCutre.wav"), NULL, SND_FILENAME | SND_ASYNC | SND_NODEFAULT | SND_NOSTOP);
-				if (dreta) sprite->changeAnimation(SHOT_RIGHT);
-				else sprite->changeAnimation(SHOT_LEFT);
-				shotProjectile();
-			}
-			else if (Game::instance().getSpecialKey(GLUT_KEY_RIGHT))
+			
+			if (moveRight)
 			{
 				dreta = true;
 				pos.x += 1;
-				if (map->collisionMoveRight(pos, colisionBox, colisionOffset))
-				{
-					pos.x -= 1;
-				}
-				else if (anim != MOVE_RIGHT && anim != BEGIN_MOVE_RIGHT)
+				if (anim != MOVE_RIGHT && anim != BEGIN_MOVE_RIGHT)
 					sprite->changeAnimation(BEGIN_MOVE_RIGHT);
 			}
-			else if (Game::instance().getSpecialKey(GLUT_KEY_LEFT))
+			else if (moveLeft)
 			{
 				dreta = false;
 				pos.x -= 1;
-				if (map->collisionMoveLeft(pos, colisionBox, colisionOffset))
-				{
-					pos.x += 1;
-				}
-				else if (anim != MOVE_LEFT && anim != BEGIN_MOVE_LEFT)
+				if (anim != MOVE_LEFT && anim != BEGIN_MOVE_LEFT)
 					sprite->changeAnimation(BEGIN_MOVE_LEFT);
 			}
-			if (Game::instance().getSpecialKey(GLUT_KEY_DOWN))
+			if (moveDown)
 			{
 				pos.y += 1;
-				if (map->collisionMoveDown(pos, colisionBox, colisionOffset))
-				{
-					pos.y -= 1;
-				}
-				else if (anim != MOVE_RIGHT && anim != MOVE_LEFT && anim != BEGIN_MOVE_RIGHT && anim != BEGIN_MOVE_LEFT) {
+				if (anim != MOVE_RIGHT && anim != MOVE_LEFT && anim != BEGIN_MOVE_RIGHT && anim != BEGIN_MOVE_LEFT) {
 					if (!dreta) sprite->changeAnimation(BEGIN_MOVE_LEFT);
 					else sprite->changeAnimation(BEGIN_MOVE_RIGHT);
 				}
 			}
-			else if (Game::instance().getSpecialKey(GLUT_KEY_UP))
+			else if (moveUp)
 			{
 				pos.y -= 1;
-				if (map->collisionMoveUp(pos, colisionBox, colisionOffset))
-				{
-					pos.y += 1;
-				}
-				else if (anim != MOVE_RIGHT && anim != MOVE_LEFT && anim != BEGIN_MOVE_RIGHT && anim != BEGIN_MOVE_LEFT) {
+				if (anim != MOVE_RIGHT && anim != MOVE_LEFT && anim != BEGIN_MOVE_RIGHT && anim != BEGIN_MOVE_LEFT) {
 					if (!dreta) sprite->changeAnimation(BEGIN_MOVE_LEFT);
 					else sprite->changeAnimation(BEGIN_MOVE_RIGHT);
 				}
+
+			}
+			else if (attackTarget) {
+				chargingAttack = true;
+				//PlaySound(TEXT("audio/axeSwingCutre.wav"), NULL, SND_FILENAME | SND_ASYNC | SND_NODEFAULT | SND_NOSTOP);
+				if (dreta) sprite->changeAnimation(SHOT_RIGHT);
+				else sprite->changeAnimation(SHOT_LEFT);
 			}
 			if (sprite->finished()) {
 				if (anim == BEGIN_MOVE_LEFT) sprite->changeAnimation(MOVE_LEFT);
@@ -192,7 +174,7 @@ void Wizard::update(int deltaTime)
 		timeChargingAttack += deltaTime;
 		if (timeChargingAttack > ATTACK_CHARGING_TIME) {
 			PlaySound(TEXT("audio/hit_placeholder.wav"), NULL, SND_FILENAME | SND_ASYNC | SND_NODEFAULT | SND_NOSTOP);
-			attacking = true;
+			shotProjectile();
 			chargingAttack = false;
 			timeChargingAttack = 0.f;
 		}
@@ -202,39 +184,49 @@ void Wizard::update(int deltaTime)
 
 
 box Wizard::hitBox() {
-	box caja;
-	return caja;
+	box HB;
+	HB.mins = projectilePos;
+	HB.maxs.x = projectilePos.x + projectileSize.x;
+	HB.maxs.y = projectilePos.y + projectileSize.y;
+	return HB;
 }
 
-void Wizard::initProjectile() {
-	projectileTexture;
-	projectileTexture.loadFromFile("images/projectile.png", TEXTURE_PIXEL_FORMAT_RGBA);
-	projectile = Sprite::createSprite(glm::ivec2(800, 200 / ALT_FRAME_PIXELS), glm::ivec2(0.25, 0.5), &projectileTexture, &shader);
-	//projectile = Sprite::createSprite(glm::ivec2(20, 10), glm::ivec2(0.25, 0.5), &projectileTexture, &shader);
+void Wizard::initProjectile(ShaderProgram &shader) {
+	projectileTexture.loadFromFile("images/projectile_2.png", TEXTURE_PIXEL_FORMAT_RGBA);
+	projectileTexture.setMagFilter(GL_NEAREST);
+
+	projectileSize.y = (5*size.y) / ALT_FRAME_PIXELS;
+	projectileSize.x = (20*size.x) / ANCH_FRAME_PIXELS;
+
+	 projectile =	Sprite::createSprite(projectileSize,	glm::vec2(PROJECTILE_ANCH_FRAME, PROJECTILE_ALT_FRAME),	&projectileTexture, &shader);
+	//sprite =		Sprite::createSprite(size,						glm::vec2(ANCH_FRAME, ALT_FRAME),							&spritesheet, &shaderProgram);
 	projectile->setNumberAnimations(2);
 	projectile->setAnimationSpeed(RIGHT, PROJECTILE_SPEED);
 	projectile->setAnimationSpeed(LEFT, PROJECTILE_SPEED);
+
 	for (int j = 0; j < 4; j++) {
 		projectile->addKeyframe(LEFT, glm::vec2(PROJECTILE_ANCH_FRAME * j, PROJECTILE_ALT_FRAME * 0));
 		projectile->addKeyframe(RIGHT, glm::vec2(PROJECTILE_ANCH_FRAME * j, PROJECTILE_ALT_FRAME * 1));
 	}
+	projectile->changeAnimation(LEFT);
 
 }
 
 void Wizard::shotProjectile() {
-	if (dreta) projectilePos.x = pos.x + (8*size.x)/ALT_FRAME_PIXELS;
-	else projectilePos.x = pos.x - (74 * size.x) / ALT_FRAME_PIXELS;
+	attacking = true;
+	projectileShot = true;
+	if (dreta) projectilePos.x = pos.x + (65*size.x)/ALT_FRAME_PIXELS;
+	else projectilePos.x = pos.x  + (8 * size.x) / ALT_FRAME_PIXELS;
 	projectilePos.y = pos.y + (42*size.y)/ANCH_FRAME_PIXELS;
 	//projectile->setPosition(projectilePos);
-	projectile->changeAnimation(LEFT);
+	if (dreta) projectile->changeAnimation(RIGHT);
+	else projectile->changeAnimation(LEFT);
 }
 
 void Wizard::updateProjectile(int deltaTime) {
-
 	projectile->update(deltaTime);
 	if (projectile->animation() == LEFT) projectilePos.x -= 2;
-	else projectilePos.x -= 2;
-	projectilePos = glm::ivec2(400, 400);
+	else projectilePos.x += 2;
 	projectile->setPosition(projectilePos);
 }
 
@@ -242,4 +234,26 @@ void Wizard::render() {
 	if(projectileShot)
 		projectile->render();
 	sprite->render();
+}
+
+void Wizard::killTarget() {
+	moveLeft = moveRight = moveUp = moveDown = attackTarget = false;
+	dreta = sprite->animation() > 7;
+	box hurtBox = target->hurtBox();
+	int middleWizard = pos.x + size.x / 2;
+	int middleTarget = (hurtBox.mins.x + hurtBox.maxs.x) / 2;
+	bool targetOnYourRight = middleWizard < middleTarget;
+	if (!dreta && targetOnYourRight)
+		moveRight = true;
+	else if (dreta && !targetOnYourRight)
+		moveLeft = true;
+	int projectPosMin = pos.y + (42 * size.y) / ANCH_FRAME_PIXELS;
+	int projectPosMax = pos.y + (47 * size.y) / ANCH_FRAME_PIXELS;
+
+	if (projectPosMin > hurtBox.maxs.y) moveUp = true;
+	else if (projectPosMax < hurtBox.mins.y) moveDown = true;
+	else if(!projectileShot) attackTarget = true;
+	else if (targetOnYourRight && hurtBox.maxs.x < this->hitBox().mins.x) attackTarget = true;
+	else if (!targetOnYourRight && hurtBox.mins.x > this->hitBox().maxs.x) attackTarget = true;
+	else if (targetOnYourRight != (projectile->animation() == RIGHT)) attackTarget = true;
 }
