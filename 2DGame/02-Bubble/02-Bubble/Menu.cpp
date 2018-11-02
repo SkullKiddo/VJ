@@ -28,7 +28,7 @@ Menu::~ Menu() {}
 
 void Menu::init() {
 
-	play = false;
+	play = true;
 	exit = false;
 	initShaders();
 	projection = glm::ortho(0.f, float(SCREEN_WIDTH), float(SCREEN_HEIGHT), 0.f);

@@ -51,7 +51,7 @@ void Knight::init(const glm::ivec2 &posInicial, ShaderProgram &shaderProgram) {
 	lifes = 3;
 	size = glm::ivec2(50 * 3, 37 * 3);
 	colisionBox.x = size.x;
-	colisionBox.y = size.y / ALT_FRAME_PIXELS;
+	colisionBox.y = size.y / (ALT_FRAME_PIXELS/2);
 	colisionOffset.x = (size.x *33.0f) / ANCH_FRAME_PIXELS;		//21 son els pixels que em sobren per davant i 68 el total
 	colisionOffset.y = (size.y) - colisionBox.y;
 	pos = posInicial;
@@ -201,13 +201,15 @@ void Knight::update(int deltaTime) {
 
 box Knight::hitBox() {
 	box hitBox;
+	int ymax = pos.y + (26.f * size.y) / 42.f;
 	if (dreta) {
 		hitBox.mins = glm::ivec2(pos.x + size.x - colisionOffset.x, pos.y); //no foto offsets ni res perque ocupa tota la vertical
-		hitBox.maxs = glm::ivec2(pos.x + size.x, pos.y + size.y);
+		hitBox.maxs = glm::ivec2(pos.x + size.x -(12.f*size.x)/80.f, ymax);
 	}
 	else {
-		hitBox.mins = glm::ivec2(pos.x, pos.y);
-		hitBox.maxs = glm::ivec2(pos.x + colisionOffset.x, pos.y + size.y);
+		hitBox.mins = glm::ivec2(pos.x + (12.f * size.x) / 80.f, pos.y);
+		hitBox.maxs = glm::ivec2(pos.x + colisionOffset.x, ymax);
 	}
 	return hitBox;
 }
+
