@@ -17,7 +17,7 @@ Scene::Scene()
 {
 	map = NULL;
 	
-	for (Character *enemy : enemies_lvl1) {
+	for (Character *enemy : enemies) {
 		enemy = NULL;
 	}
 }
@@ -27,7 +27,7 @@ Scene::~Scene()
 	if(map != NULL)
 		delete map;
 	
-	for (Character *enemy : enemies_lvl1) {
+	for (Character *enemy : enemies) {
 		if (enemy != NULL) delete enemy;
 	}
 }
@@ -36,50 +36,32 @@ Scene::~Scene()
 void Scene::init()
 {
 	initShaders();
+	setBackground("Background/white.jpg");
+	map = TileMap::createTileMap("levels/Arena_collision.txt", glm::vec2(SCREEN_X, SCREEN_Y), texProgram);
 	projection = glm::ortho(0.f, float(SCREEN_WIDTH), float(SCREEN_HEIGHT), 0.f);
 	currentTime = 0.0f;
-	enemies[level] = vector<Character*> (numEnemiesLevel[level]);
+
+
 	//inicialitzar enemics
+	if (choice == 1) player = new Adventurer();
+	else if (choice == 2) player = new Green_Adventurer();
+	else player = new Knight();
 
-	if (level == 0) {
-	setBackground("Background/Arena.png");
-	map = TileMap::createTileMap("levels/Arena_collision.txt", glm::vec2(SCREEN_X, SCREEN_Y), texProgram);
- 		enemies[0][0] = new Skeleton();
-		enemies[0][0]->init(glm::ivec2(SCREEN_WIDTH / 2, SCREEN_HEIGHT / 2), texProgram);
-		enemies[0][1] = new HeavyBandit();
-		enemies[0][1]->init(glm::ivec2(SCREEN_WIDTH / 2, SCREEN_HEIGHT / 2), texProgram);
-		enemies[0][2] = new LightBandit();
-		enemies[0][2]->init(glm::ivec2(SCREEN_WIDTH / 2, SCREEN_HEIGHT / 2), texProgram);
-	}
-
-	else if (level == 1) {
-		setBackground("Background/lvl2.jpg");
-		map = TileMap::createTileMap("levels/Arena_collision.txt", glm::vec2(SCREEN_X, SCREEN_Y), texProgram);
-		enemies[1][0] = new Wizard();
-		enemies[1][0]->init(glm::ivec2(20, SCREEN_HEIGHT / 2), texProgram);
-		enemies[1][1] = new Wizard();
-		enemies[1][1]->init(glm::ivec2(SCREEN_WIDTH / 2, 20), texProgram);
-		enemies[1][2] = new Wizard();
-		enemies[1][2]->init(glm::ivec2(SCREEN_WIDTH -20, SCREEN_HEIGHT / 2), texProgram);
-		enemies[1][3] = new Wizard();
-		enemies[1][3]->init(glm::ivec2(SCREEN_WIDTH / 2, SCREEN_HEIGHT -20), texProgram);
-		
-	}
-	player = new Adventurer();
-	player->setTileMap(map);
 	player->init(glm::ivec2(SCREEN_WIDTH / 2, SCREEN_HEIGHT / 2), texProgram);
+	enemies[0] = new Skeleton();
+	enemies[0]->init(glm::ivec2(SCREEN_WIDTH / 2, SCREEN_HEIGHT / 2), texProgram);
+	enemies[1] = new HeavyBandit();
+	enemies[1]->init(glm::ivec2(SCREEN_WIDTH / 2, SCREEN_HEIGHT / 2), texProgram);
 
-	for (Character* enemy : enemies[level]) {
-		enemy->setTileMap(map);
+	for (int i = 0; i < NUM_ENEMIES; i++) {
+		enemies[i]->setTileMap(map);
+	}
+	player->setTileMap(map);
+
+	//asignar objectius
+	for (Character* enemy : enemies) {
 		enemy->target = player;
 	}
-
-
-	/*for (int i = 0; i < NUM_ENEMIES; i++) {
-		enemies_lvl1[i]->setTileMap(map);
-	}*/
-	//asignar objectius
-	
 }
 
 void Scene::update(int deltaTime)
@@ -90,7 +72,8 @@ void Scene::update(int deltaTime)
 
 	currentTime += deltaTime;
 	//player->update(deltaTime);
-	for (Character *enemy : enemies[level]) {
+	
+	for (Character *enemy : enemies) {
 		enemy->update(deltaTime);
 	}
 	//float cameraOffsetX = -20 + player->posPlayer.x;
@@ -100,25 +83,115 @@ void Scene::update(int deltaTime)
 	
 	if (Game::instance().getKey('h')) {
 		player->hit();
-		for (Character* enemy: enemies[level]) {
+		for (Character* enemy: enemies) {
 			enemy->hit();
 		}
-	}
-	if (Game::instance().getKey('n') && level == 0) {
-		level++;
-		init();
 	}
 	player->update(deltaTime);
 	handleAtacks();
 	
 }
 
+void Scene::setChoice(int choice) {
+	this->choice = choice;
+	init();
+}
+
+bool colision(box b1, box b2) {
+	//cada bool indica si el punt descrit esta compres en l'altre capsa en la seva dimensio ex: b1MinX sera true si nomes si b1.mins.x esta entre b2.mins.x i b2.max.x
+	bool b1MinX, b2MinX, b1MaxX, b2MaxX,  b1MinY, b1MaxY, b2MinY, b2MaxY; //DEBUG
+	b1MaxX = true; //DEBUG
+	if (b1.mins.x > b2.mins.x) {
+		if (b1.mins.x < b2.maxs.x) {
+			if (b1.mins.y > b2.mins.y) {
+				return true;
+			}
+			else if (b2.mins.y < b1.maxs.y) return true;
+
+			if (b1.maxs.y < b2.maxs.y) {
+				if (b1.maxs.y > b2.mins.y) return true;
+			}
+			else if (b2.maxs.y > b1.mins.y) return true;
+		}
+	}
+	else if (b2.mins.x < b1.maxs.x) {
+		if (b1.mins.y > b2.mins.y) {
+			if (b1.mins.y < b2.maxs.y) return true;
+		}
+		else if (b2.mins.y < b1.maxs.y) return true;
+
+		if (b1.maxs.y < b2.maxs.y) {
+			if (b1.maxs.y > b2.mins.y) return true;
+		}
+		else if (b2.maxs.y > b1.mins.y) return true;
+	}
+
+	if (b1.maxs.x < b2.maxs.x) {
+		if (b1.maxs.x > b2.mins.x) {
+			if (b1.mins.y > b2.mins.y) {
+				if (b1.mins.y < b2.maxs.y) return true;
+			}
+			else if (b2.mins.y < b1.maxs.y) return true;
+
+			if (b1.maxs.y < b2.maxs.y) {
+				if (b1.maxs.y > b2.mins.y) return true;
+			}
+			else if (b2.maxs.y > b1.mins.y) return true;
+		}
+	}
+	else if (b2.maxs.x > b1.mins.x) {
+		if (b1.mins.y > b2.mins.y) {
+			if (b1.mins.y < b2.maxs.y) return true;
+		}
+		else if (b2.mins.y < b1.maxs.y) return true;
+
+		if (b1.maxs.y < b2.maxs.y) {
+			if (b1.maxs.y > b2.mins.y) return true;
+		}
+		else if (b2.maxs.y > b1.mins.y) return true;
+	}
+	return false;
+/*
+	if (b1.mins.y > b2.mins.y) { 
+		if (b1.mins.y < b2.maxs.y) b1MinY = true;
+	}
+	else if (b2.mins.y < b1.maxs.y) b2MinY = true;
+
+	if (b1.maxs.y < b2.maxs.y) {
+		if (b1.maxs.y > b2.mins.y) b1MaxY = true;
+	}
+	else if (b2.maxs.y > b1.mins.y) b2MaxY = true;*/
+
+
+
+	/*if (b1.mins.x > b2.mins.x) {
+		if(b1.mins.x < b2.maxs.x) b1MinX = true;
+	}
+	else if (b2.mins.x < b1.maxs.x) b2MinX = true;
+
+	if (b1.maxs.x < b2.maxs.x) {
+		if (b1.maxs.x > b2.mins.x) b1MaxX = true;
+	}
+	else if (b2.maxs.x > b1.mins.x) b2MaxX = true;
+
+	if (b1.mins.y > b2.mins.y) {
+		if (b1.mins.y < b2.maxs.y) b1MinY = true;
+	}
+	else if (b2.mins.y < b1.maxs.y) b2MinY = true;
+
+	if (b1.maxs.y < b2.maxs.y) {
+		if (b1.maxs.y > b2.mins.y) b1MaxY = true;
+	}
+	else if (b2.maxs.y > b1.mins.y) b2MaxY = true;*/
+
+
+}
+
 void Scene::handleAtacks() {	//comprova si esta atacant cada enemic i ens golpeja si estem a la seva hitbox
-	for (Character *enemy : enemies[level]) {
+	for (Character *enemy : enemies) {
 		if (player->attacking && player->canHit(enemy)) enemy->hit();
 		//if (enemy->attacking && enemy->canHit(player)) player->hit();
 	}
-
 }
 
 bool cmp(const Character *e1, const Character *e2) {
@@ -140,9 +213,12 @@ void Scene::render()
 	texProgram.setUniform2f("texCoordDispl", 0.f, 0.f);
 	background->render(texs);
 	if (bcollision) map->render();
-	std::sort(enemies[level].begin(), enemies[level].end(), cmp);
+	auto e1 = enemies[0];
+
+	std::vector<Character*> myvector(enemies, enemies + NUM_ENEMIES);    //funciona, no preguntis
+	std::sort(myvector.begin(), myvector.end(), cmp);
 	bool drawnPlayer = false;
-	for (Character *character : enemies[level]) {
+	for (Character *character : myvector) {
 		if (!drawnPlayer && (character->pos.y + character->size.y) > (player->pos.y + player->size.y)) {
 			player->render();
 			drawnPlayer = true;

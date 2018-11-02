@@ -40,6 +40,12 @@ void Scene::init()
 	currentTime = 0.0f;
 	enemies[level] = vector<Character*> (numEnemiesLevel[level]);
 	//inicialitzar enemics
+<<<<<<< HEAD
+	if (choice == 1) player = new Adventurer();
+	else if (choice == 2) player = new Green_Adventurer();
+	else player = new Knight();
+=======
+>>>>>>> a6892827b640b91049afc383f8352fb8e4de46ca
 
 	if (level == 0) {
 	setBackground("Background/Arena.png");
@@ -113,6 +119,104 @@ void Scene::update(int deltaTime)
 	
 }
 
+<<<<<<< HEAD
+void Scene::setChoice(int choice) {
+	this->choice = choice;
+	init();
+}
+
+bool colision(box b1, box b2) {
+	//cada bool indica si el punt descrit esta compres en l'altre capsa en la seva dimensio ex: b1MinX sera true si nomes si b1.mins.x esta entre b2.mins.x i b2.max.x
+	bool b1MinX, b2MinX, b1MaxX, b2MaxX,  b1MinY, b1MaxY, b2MinY, b2MaxY; //DEBUG
+	b1MaxX = true; //DEBUG
+	if (b1.mins.x > b2.mins.x) {
+		if (b1.mins.x < b2.maxs.x) {
+			if (b1.mins.y > b2.mins.y) {
+				return true;
+			}
+			else if (b2.mins.y < b1.maxs.y) return true;
+
+			if (b1.maxs.y < b2.maxs.y) {
+				if (b1.maxs.y > b2.mins.y) return true;
+			}
+			else if (b2.maxs.y > b1.mins.y) return true;
+		}
+	}
+	else if (b2.mins.x < b1.maxs.x) {
+		if (b1.mins.y > b2.mins.y) {
+			if (b1.mins.y < b2.maxs.y) return true;
+		}
+		else if (b2.mins.y < b1.maxs.y) return true;
+
+		if (b1.maxs.y < b2.maxs.y) {
+			if (b1.maxs.y > b2.mins.y) return true;
+		}
+		else if (b2.maxs.y > b1.mins.y) return true;
+	}
+
+	if (b1.maxs.x < b2.maxs.x) {
+		if (b1.maxs.x > b2.mins.x) {
+			if (b1.mins.y > b2.mins.y) {
+				if (b1.mins.y < b2.maxs.y) return true;
+			}
+			else if (b2.mins.y < b1.maxs.y) return true;
+
+			if (b1.maxs.y < b2.maxs.y) {
+				if (b1.maxs.y > b2.mins.y) return true;
+			}
+			else if (b2.maxs.y > b1.mins.y) return true;
+		}
+	}
+	else if (b2.maxs.x > b1.mins.x) {
+		if (b1.mins.y > b2.mins.y) {
+			if (b1.mins.y < b2.maxs.y) return true;
+		}
+		else if (b2.mins.y < b1.maxs.y) return true;
+
+		if (b1.maxs.y < b2.maxs.y) {
+			if (b1.maxs.y > b2.mins.y) return true;
+		}
+		else if (b2.maxs.y > b1.mins.y) return true;
+	}
+	return false;
+/*
+	if (b1.mins.y > b2.mins.y) { 
+		if (b1.mins.y < b2.maxs.y) b1MinY = true;
+	}
+	else if (b2.mins.y < b1.maxs.y) b2MinY = true;
+
+	if (b1.maxs.y < b2.maxs.y) {
+		if (b1.maxs.y > b2.mins.y) b1MaxY = true;
+	}
+	else if (b2.maxs.y > b1.mins.y) b2MaxY = true;*/
+
+
+
+	/*if (b1.mins.x > b2.mins.x) {
+		if(b1.mins.x < b2.maxs.x) b1MinX = true;
+	}
+	else if (b2.mins.x < b1.maxs.x) b2MinX = true;
+
+	if (b1.maxs.x < b2.maxs.x) {
+		if (b1.maxs.x > b2.mins.x) b1MaxX = true;
+	}
+	else if (b2.maxs.x > b1.mins.x) b2MaxX = true;
+
+	if (b1.mins.y > b2.mins.y) {
+		if (b1.mins.y < b2.maxs.y) b1MinY = true;
+	}
+	else if (b2.mins.y < b1.maxs.y) b2MinY = true;
+
+	if (b1.maxs.y < b2.maxs.y) {
+		if (b1.maxs.y > b2.mins.y) b1MaxY = true;
+	}
+	else if (b2.maxs.y > b1.mins.y) b2MaxY = true;*/
+
+
+}
+
+=======
+>>>>>>> a6892827b640b91049afc383f8352fb8e4de46ca
 void Scene::handleAtacks() {	//comprova si esta atacant cada enemic i ens golpeja si estem a la seva hitbox
 	for (Character *enemy : enemies[level]) {
 		if (player->attacking && player->canHit(enemy)) enemy->hit();

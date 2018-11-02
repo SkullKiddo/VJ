@@ -101,7 +101,7 @@ void Skeleton::update(int deltaTime)
 		if (sprite->finished() || (anim != HIT_LEFT && anim != HIT_RIGHT && anim != ATTACK_LEFT && anim != ATTACK_RIGHT)) {
 			auto initialPos = pos;
 
-			if (attackTarguet) {
+			if (attackTarget) {
 				chargingAttack= true;
 				//PlaySound(TEXT("audio/axeSwingCutre.wav"), NULL, SND_FILENAME | SND_ASYNC | SND_NODEFAULT | SND_NOSTOP);
 				if (dreta) sprite->changeAnimation(ATTACK_RIGHT);
@@ -190,14 +190,3 @@ box Skeleton::hitBox() {
 	}
 	return hitBox;
 }
-
-
-
-
-
-
-
-//void Skeleton::render()
-//{
-//	sprite->render();
-//}

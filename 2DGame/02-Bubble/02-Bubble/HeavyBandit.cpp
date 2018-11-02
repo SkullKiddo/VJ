@@ -82,7 +82,7 @@ void HeavyBandit::update(int deltaTime)
 		if (sprite->finished() || (anim != HIT_LEFT && anim != HIT_RIGHT && anim != ATACK_LEFT && anim != ATACK_RIGHT)) {
 			auto initialPos = pos;
 
-			if (attackTarguet) {
+			if (attackTarget) {
 				PlaySound(TEXT("audio/hit_placeholder.wav"), NULL, SND_FILENAME | SND_ASYNC | SND_NODEFAULT | SND_NOSTOP);
 				chargingAttack = true;
 				mciSendString(L"play audio/axeSwingCutre.wav", NULL, 0, NULL);

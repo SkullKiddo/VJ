@@ -1,7 +1,12 @@
 #ifndef _SCENE_INCLUDE
 #define _SCENE_INCLUDE
 
-#define NUM_ENEMIES 2
+#include <vector>
+
+#define NUM_LEVELS 2
+#define NUM_ENEMIES_LVL1 3
+#define NUM_ENEMIES_LVL2 4
+
 
 
 #include <glm/glm.hpp>
@@ -15,7 +20,7 @@
 #include "Adventurer.h"
 #include "Knight.h"
 #include "Wizard.h"
-#include "Green_Adventurer.h"
+#include "LightBandit.h"
 
 // Scene contains all the entities of our game.
 // It is responsible for updating and render them.
@@ -47,7 +52,7 @@ public:
 	void setCollsion();
 	bool getEscape();
 	void keepPlaying();
-	void setChoice(int choice);
+	int level = 0;
 
 private:
 	void initShaders();
@@ -56,19 +61,20 @@ private:
 	TileMap *map;
 	Maps mapping;
 	Character* player;
-	Character *enemies[NUM_ENEMIES];
+	Character *enemies_lvl1[NUM_ENEMIES_LVL1];
+	Character *enemies_lvl2[NUM_ENEMIES_LVL2];
+	int numLevels = 2;
+	vector<vector<Character*> > enemies = vector<vector<Character*> >(numLevels);;
 	ShaderProgram texProgram;
 	float currentTime;
 	glm::mat4 projection;
-
+	int numEnemiesLevel[2] = { NUM_ENEMIES_LVL1, NUM_ENEMIES_LVL2 };
 	Texture texs;
 	TexturedQuad *background;
 	bool bcollision = false;
-	bool escape = true;
+	bool escape = false;
 	bool first = false;
 	void handleAtacks();
-
-	int choice = 1;
 };
 
 
