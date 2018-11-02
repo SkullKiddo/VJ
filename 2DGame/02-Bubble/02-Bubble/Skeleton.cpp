@@ -15,19 +15,19 @@
 #define ANCH_FRAME 1.f/18.f
 #define ALT_FRAME_PIXELS 37.f
 #define ANCH_FRAME_PIXELS 58.f
-#define ATACK_CHARGING_TIME (1000.f/MOVEMENT_SPEED) *7.f //aqui nomes s'ha de substituir el 7 per el num de frames que hagi d'esperar abans d'atacar
+#define ATTACK_CHARGING_TIME (1000.f/MOVEMENT_SPEED) *7.f //aqui nomes s'ha de substituir el 7 per el num de frames que hagi d'esperar abans d'atacar
 
 enum PlayerAnims
 {
-	ATACK_RIGHT, ATACK_LEFT, REACT_RIGHT, REACT_LEFT, DIE_RIGHT, DIE_LEFT, IDDLE_RIGHT, 
-	IDDLE_LEFT, HIT_RIGHT, HIT_LEFT, MOVE_RIGHT, MOVE_LEFT, DIEDEDED_RIGHT, DIEDEDED_LEFT
+	ATTACK_RIGHT, ATTACK_LEFT, REACT_RIGHT, REACT_LEFT, DIE_RIGHT, DIE_LEFT, IDLE_RIGHT, 
+	IDLE_LEFT, HIT_RIGHT, HIT_LEFT, MOVE_RIGHT, MOVE_LEFT, DIEDEDED_RIGHT, DIEDEDED_LEFT
 };
 
 int skeletonAnimSize[] = {18,4,15,11,8,13};
 
 void Skeleton::hit() {
 	if (vulnerable && alive) {
-		chargingAtack = false;
+		chargingAttack= false;
 		vulnerable = false;
 		if (lifes > 1) {
 			lifes--;
@@ -55,9 +55,9 @@ void Skeleton::init(const glm::ivec2 &posInicial, ShaderProgram &shaderProgram) 
 	colisionBox.y = (size.y) / ALT_FRAME_PIXELS;				//37 perque te 37 pixels i vull que sigui nomes un pixel de ample
 	colisionOffset.x = (size.x *26.0f) / ANCH_FRAME_PIXELS;		//21 son els pixels que em sobren per davant i 68 el total
 	colisionOffset.y = (size.y) - colisionBox.y;	//aixo esta bé mentre es recolzi al terra per la part mes baixa (que en principi sera aixi amb tot personatge)
-	//hitBoxOffset.y = (size.y * 37.f) / ALT_FRAME_PIXELS; Aixo no em cal perque el atack ocupa tota la vertical del sprite
+	//hitBoxOffset.y = (size.y * 37.f) / ALT_FRAME_PIXELS; Aixo no em cal perque el ATTACK ocupa tota la vertical del sprite
 	pos = posInicial;
-	timeChargingAtack = 0.f;
+	timeChargingAttack= 0.f;
 	spritesheet.loadFromFile("images/esqueleto.png", TEXTURE_PIXEL_FORMAT_RGBA);
 	spritesheet.setMagFilter(GL_NEAREST);
 	sprite = Sprite::createSprite(size, glm::vec2(ANCH_FRAME,ALT_FRAME), &spritesheet, &shaderProgram);
@@ -92,20 +92,20 @@ void Skeleton::update(int deltaTime)
 {
 	killTarget();
 	sprite->update(deltaTime);
-	float debug = ATACK_CHARGING_TIME;
-	atacking = false;
+	float debug = ATTACK_CHARGING_TIME;
+	attacking= false;
 	int anim = sprite->animation();
 	dreta = anim % 2 == 0;
 	if (sprite->finished()) vulnerable = true;
 	if (alive) {
-		if (sprite->finished() || (anim != HIT_LEFT && anim != HIT_RIGHT && anim != ATACK_LEFT && anim != ATACK_RIGHT)) {
+		if (sprite->finished() || (anim != HIT_LEFT && anim != HIT_RIGHT && anim != ATTACK_LEFT && anim != ATTACK_RIGHT)) {
 			auto initialPos = pos;
 
-			if (atackTarguet) {
-				chargingAtack = true;
+			if (attackTarguet) {
+				chargingAttack= true;
 				//PlaySound(TEXT("audio/axeSwingCutre.wav"), NULL, SND_FILENAME | SND_ASYNC | SND_NODEFAULT | SND_NOSTOP);
-				if (dreta) sprite->changeAnimation(ATACK_RIGHT);
-				else sprite->changeAnimation(ATACK_LEFT);
+				if (dreta) sprite->changeAnimation(ATTACK_RIGHT);
+				else sprite->changeAnimation(ATTACK_LEFT);
 			}
 			else if (moveRight)
 			{
@@ -154,8 +154,8 @@ void Skeleton::update(int deltaTime)
 				}
 			}
 			if (initialPos == pos){
-				if (dreta && anim != IDDLE_RIGHT) sprite->changeAnimation(IDDLE_RIGHT);
-				else if(!dreta && anim != IDDLE_LEFT) sprite->changeAnimation(IDDLE_LEFT);
+				if (dreta && anim != IDLE_RIGHT) sprite->changeAnimation(IDLE_RIGHT);
+				else if(!dreta && anim != IDLE_LEFT) sprite->changeAnimation(IDLE_LEFT);
 			}
 		}
 	}
@@ -165,13 +165,13 @@ void Skeleton::update(int deltaTime)
 			else sprite->changeAnimation(DIEDEDED_LEFT);
 		}
 	}
-	if (chargingAtack) {
-		timeChargingAtack += deltaTime;
-		if (timeChargingAtack > ATACK_CHARGING_TIME) {
-			mciSendString(L"play audio/axeSwingCutre.wav", NULL, 0, NULL);
-			atacking = true;
-			chargingAtack = false;
-			timeChargingAtack = 0.f;
+	if (chargingAttack) {
+		timeChargingAttack+= deltaTime;
+		if (timeChargingAttack> ATTACK_CHARGING_TIME) {
+			PlaySound(TEXT("audio/hit_placeholder.wav"), NULL, SND_FILENAME | SND_ASYNC | SND_NODEFAULT | SND_NOSTOP);
+			attacking = true;
+			chargingAttack= false;
+			timeChargingAttack= 0.f;
 		}
 	}
 	setPosition();

@@ -5,7 +5,6 @@
 #include "Scene.h"
 #include "Menu.h"
 
-
 #define SCREEN_WIDTH 1680	
 #define SCREEN_HEIGHT 1040
 

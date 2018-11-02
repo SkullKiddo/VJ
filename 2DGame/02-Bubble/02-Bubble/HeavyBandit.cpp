@@ -16,12 +16,12 @@
 
 enum PlayerAnims
 {
-	IDDLE_LEFT, MOVE_LEFT, ATACK_LEFT, DIE_LEFT, HIT_LEFT, IDDLE_RIGHT, MOVE_RIGHT, ATACK_RIGHT, DIE_RIGHT, HIT_RIGHT
+	IDLE_LEFT, MOVE_LEFT, ATACK_LEFT, DIE_LEFT, HIT_LEFT, IDLE_RIGHT, MOVE_RIGHT, ATACK_RIGHT, DIE_RIGHT, HIT_RIGHT
 };
 
 void HeavyBandit::hit() {
 	if (vulnerable && alive) {
-		chargingAtack = false;
+		chargingAttack = false;
 		vulnerable = false;
 		if (lifes > 1) {
 			lifes--;
@@ -48,7 +48,7 @@ void HeavyBandit::init(const glm::ivec2 &posInicial, ShaderProgram &shaderProgra
 	colisionOffset.x = (size.x *16.0f) / ANCH_FRAME_PIXELS;		//21 son els pixels que em sobren per davant i 68 el total
 	colisionOffset.y = (size.y) - colisionBox.y;	//aixo esta bé mentre es recolzi al terra per la part mes baixa (que en principi sera aixi amb tot personatge)
 	pos = posInicial;
-	timeChargingAtack = 0.f;
+	timeChargingAttack = 0.f;
 	spritesheet.loadFromFile("images/HeavyBandit.png", TEXTURE_PIXEL_FORMAT_RGBA);
 	spritesheet.setMagFilter(GL_NEAREST);
 	sprite = Sprite::createSprite(size, glm::vec2(ANCH_FRAME, ALT_FRAME), &spritesheet, &shaderProgram);
@@ -74,7 +74,7 @@ void HeavyBandit::update(int deltaTime)
 {
 	killTarget();
 	sprite->update(deltaTime);
-	atacking = false;
+	attacking = false;
 	int anim = sprite->animation();
 	dreta = anim > 4;
 	if (sprite->finished()) vulnerable = true;
@@ -82,9 +82,9 @@ void HeavyBandit::update(int deltaTime)
 		if (sprite->finished() || (anim != HIT_LEFT && anim != HIT_RIGHT && anim != ATACK_LEFT && anim != ATACK_RIGHT)) {
 			auto initialPos = pos;
 
-			if (atackTarguet) {
-				//PlaySound(TEXT("audio/axeSwingCutre.wav"), NULL, SND_FILENAME | SND_ASYNC | SND_NODEFAULT | SND_NOSTOP);
-				chargingAtack = true;
+			if (attackTarguet) {
+				PlaySound(TEXT("audio/hit_placeholder.wav"), NULL, SND_FILENAME | SND_ASYNC | SND_NODEFAULT | SND_NOSTOP);
+				chargingAttack = true;
 				mciSendString(L"play audio/axeSwingCutre.wav", NULL, 0, NULL);
 				if (dreta) sprite->changeAnimation(ATACK_RIGHT);
 				else sprite->changeAnimation(ATACK_LEFT);
@@ -134,19 +134,19 @@ void HeavyBandit::update(int deltaTime)
 					else sprite->changeAnimation(MOVE_RIGHT);
 				}
 			}
-			if (initialPos == pos && anim != IDDLE_LEFT && anim != IDDLE_RIGHT) {
-				if (dreta) sprite->changeAnimation(IDDLE_RIGHT);
-				else sprite->changeAnimation(IDDLE_LEFT);
+			if (initialPos == pos && anim != IDLE_LEFT && anim != IDLE_RIGHT) {
+				if (dreta) sprite->changeAnimation(IDLE_RIGHT);
+				else sprite->changeAnimation(IDLE_LEFT);
 			}
 		}
-		if (chargingAtack) {
-			timeChargingAtack += deltaTime;
-			if (timeChargingAtack > ATACK_CHARGING_TIME) {
+		if (chargingAttack) {
+			timeChargingAttack += deltaTime;
+			if (timeChargingAttack > ATACK_CHARGING_TIME) {
 				mciSendString(L"play audio/axeSwingCutre.wav", NULL, 0, NULL);
-				atacking = true;
+				attacking = true;
 				
-				chargingAtack = false;
-				timeChargingAtack = 0.f;
+				chargingAttack = false;
+				timeChargingAttack = 0.f;
 			}
 		}
 	}
