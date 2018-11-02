@@ -7,6 +7,7 @@
 #include "Game.h"
 #include <algorithm>
 
+#define MAX_TIME_BETWEEN_OPTIONS 1000
 #define MOVEMENT_SPEED 8
 #define POSX 0
 #define POSY 0
@@ -78,7 +79,7 @@ void Menu::update(int deltaTime) {
 	if (sprite->finished())
 		sprite->changeAnimation(MENU);
 
-	if (sprite_options->finished() || anim != PLAY && anim != INSTRUCTIONS && anim != CREDITS && anim != EXIT)
+	if (sprite_options->finished() || (anim != PLAY && anim != INSTRUCTIONS && anim != CREDITS && anim != EXIT))
 	{
 		if (Game::instance().getSpecialKey(GLUT_KEY_DOWN)) {
 			switch (anim) {

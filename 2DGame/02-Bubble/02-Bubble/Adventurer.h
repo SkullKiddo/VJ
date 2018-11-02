@@ -13,6 +13,7 @@ public:
 	void init(const glm::ivec2 &tileMapPos, ShaderProgram &shaderProgram);
 	void update(int deltaTime);
 	void hit();
+	void render();
 	box hitBox();
 
 private:

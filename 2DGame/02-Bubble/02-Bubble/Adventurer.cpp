@@ -9,6 +9,8 @@
 #define SIZE 10
 #define POSX 10
 #define POSY 10
+
+//ADVENTURER
 #define ALTFRAME 1.f/26.f
 #define ANCHFRAME 1.f/10.f
 #define ANCH_FRAME_PIXELS 50
@@ -19,6 +21,14 @@
 #define ATACK_1_3_CHARGING_TIME (1000.f/MOVEMENT_SPEED) *2.f
 #define ATACK_2_CHARGING_TIME (1000.f/MOVEMENT_SPEED)
 
+//HEARTS
+#define ANCHFRAME_HEARTS 1.f
+#define ALTFRAME_HEARTS 1.f/7.f
+
+#define ANCH_FRAME_HEARTS_PIXELS 225
+#define ALT_FRAME_HEARTS_PIXELS 75
+
+
 enum PlayerAnims
 {
 	IDLE_RIGHT, IDLE_LEFT, CROUCH_RIGHT, CROUCH_LEFT, RUN_RIGHT, RUN_LEFT, JUMP_RIGHT, JUMP_LEFT,
@@ -26,6 +36,9 @@ enum PlayerAnims
 	ATTACK_2_RIGHT, ATTACK_2_LEFT, ATTACK_3_RIGHT, ATTACK_3_LEFT, DIE_RIGHT, DIE_LEFT, 
 	DRAW_RIGHT, DRAW_LEFT, CAST_RIGHT, CAST_LEFT, JUMP_ATTACK_RIGHT, JUMP_ATTACK_LEFT, HIT_RIGHT, HIT_LEFT, DIEDEDEDEDED_RIGHT, DIEDEDEDEDED_LEFT
 };
+
+enum HeartsAnim { FULL, ONE_HIT, TWO_HITS, THREE_HITS, TWO_LIFES, ONE_LIFE, DEAD };
+
 
 void Adventurer::hit() {
 	if (vulnerable && alive) {
@@ -35,15 +48,18 @@ void Adventurer::hit() {
 			lifes--;
 			if (dreta) sprite->changeAnimation(HIT_RIGHT);
 			else sprite->changeAnimation(HIT_LEFT);
+			if (lifes == 2) sprite_hearts->changeAnimation(ONE_HIT);
+			else sprite_hearts->changeAnimation(TWO_HITS);
 		}
 		else {
 			lifes = 0;
 			alive = false;
 			if (dreta) sprite->changeAnimation(DIE_RIGHT);
 			else sprite->changeAnimation(DIE_LEFT);
-
+			sprite_hearts->changeAnimation(THREE_HITS);
 		}
 	}
+	hitted = true;
 }
 
 void Adventurer::init(const glm::ivec2 &posInicial, ShaderProgram &shaderProgram) {
@@ -61,38 +77,59 @@ void Adventurer::init(const glm::ivec2 &posInicial, ShaderProgram &shaderProgram
 	spritesheet.setMagFilter(GL_NEAREST);
 	sprite = Sprite::createSprite(size, glm::vec2(ANCHFRAME, ALTFRAME), &spritesheet, &shaderProgram);
 	sprite->setNumberAnimations(30);
-
 	for (int i = 0; i < 26; i += 2) {
 		sprite->setAnimationSpeed(i, MOVEMENT_SPEED);
 		for (int j = 0; j < animSize[i / 2]; ++j)
 			sprite->addKeyframe(i, glm::vec2(ANCHFRAME * j, ALTFRAME * i));
 	}
-
 	for (int i = 1; i < 26; i += 2) {
 		sprite->setAnimationSpeed(i, MOVEMENT_SPEED);
 		for (int j = 0; j < animSize[i / 2]; ++j)
 			sprite->addKeyframe(i, glm::vec2(ANCHFRAME * (animSize[i / 2] - 1 - j), ALTFRAME * i));
 	}
-
 	sprite->setAnimationSpeed(HIT_RIGHT, MOVEMENT_SPEED);
 	for (int j = 0; j < 4; ++j) sprite->addKeyframe(HIT_RIGHT, glm::vec2(ANCHFRAME * j, ALTFRAME * DIE_RIGHT));
-
 	sprite->setAnimationSpeed(HIT_LEFT, MOVEMENT_SPEED);
 	for (int j = 0; j < 4; ++j) sprite->addKeyframe(HIT_LEFT, glm::vec2(ANCHFRAME * (10 - 1 - j), ALTFRAME * DIE_LEFT));
-
 	sprite->setAnimationSpeed(DIEDEDEDEDED_RIGHT, MOVEMENT_SPEED);
 	sprite->addKeyframe(DIEDEDEDEDED_RIGHT, glm::vec2(ANCHFRAME * (9), ALTFRAME * DIE_RIGHT));
-
 	sprite->setAnimationSpeed(DIEDEDEDEDED_LEFT, MOVEMENT_SPEED);
 	for (int j = 0; j < 4; ++j) sprite->addKeyframe(DIEDEDEDEDED_LEFT, glm::vec2(0, ALTFRAME * DIE_LEFT));
-
 	sprite->setPosition(glm::vec2(pos.x, pos.y));
+
+	//HEARTS
+
+	size_hearts = glm::ivec2(ANCH_FRAME_HEARTS_PIXELS, ALT_FRAME_HEARTS_PIXELS);
+
+	spritesheet_hearts.loadFromFile("images/Hearts.png", TEXTURE_PIXEL_FORMAT_RGBA);
+	spritesheet_hearts.setMagFilter(GL_NEAREST);
+
+	sprite_hearts = Sprite::createSprite(size_hearts, glm::vec2(ANCHFRAME_HEARTS, ALTFRAME_HEARTS), &spritesheet_hearts, &shaderProgram);
+	sprite_hearts->setNumberAnimations(7);
+	sprite_hearts->setAnimationSpeed(FULL, MOVEMENT_SPEED);
+	sprite_hearts->addKeyframe(FULL, glm::vec2(ANCHFRAME_HEARTS, ALTFRAME_HEARTS * 0));
+	sprite_hearts->setAnimationSpeed(ONE_HIT, MOVEMENT_SPEED);
+	sprite_hearts->addKeyframe(ONE_HIT, glm::vec2(ANCHFRAME_HEARTS, ALTFRAME_HEARTS * 1));
+	sprite_hearts->setAnimationSpeed(TWO_HITS, MOVEMENT_SPEED);
+	sprite_hearts->addKeyframe(TWO_HITS, glm::vec2(ANCHFRAME_HEARTS, ALTFRAME_HEARTS * 2));
+	sprite_hearts->setAnimationSpeed(THREE_HITS, MOVEMENT_SPEED);
+	sprite_hearts->addKeyframe(THREE_HITS, glm::vec2(ANCHFRAME_HEARTS, ALTFRAME_HEARTS * 3));
+	sprite_hearts->setAnimationSpeed(TWO_LIFES, MOVEMENT_SPEED);
+	sprite_hearts->addKeyframe(TWO_LIFES, glm::vec2(ANCHFRAME_HEARTS, ALTFRAME_HEARTS * 4));
+	sprite_hearts->setAnimationSpeed(ONE_LIFE, MOVEMENT_SPEED);
+	sprite_hearts->addKeyframe(ONE_LIFE, glm::vec2(ANCHFRAME_HEARTS, ALTFRAME_HEARTS * 5));
+	sprite_hearts->setAnimationSpeed(DEAD, MOVEMENT_SPEED);
+	sprite_hearts->addKeyframe(DEAD, glm::vec2(ANCHFRAME_HEARTS, ALTFRAME_HEARTS * 6));
+
+	sprite_hearts->setPosition(glm::vec2(0,0));
+	sprite_hearts->changeAnimation(FULL); //per defecte full vida
 }
 
 void Adventurer::update(int deltaTime) {
 	atacking = false;
 	timeBetweenAttacks += deltaTime;
 	sprite->update(deltaTime);
+	sprite_hearts->update(deltaTime);
 	int anim = sprite->animation();
 	dreta = anim % 2 == 0;
 	if (sprite->finished()) vulnerable = true;
@@ -233,14 +270,33 @@ void Adventurer::update(int deltaTime) {
 				else sprite->changeAnimation(DRAW_LEFT);
 			}
 		}
+
+		if (sprite_hearts->finished() || (sprite_hearts->animation() != ONE_HIT && sprite_hearts->animation() != TWO_HITS 
+			&& sprite_hearts->animation() != TWO_LIFES && sprite_hearts->animation() != ONE_LIFE))
+		{
+			switch (lifes)
+			{
+			case 2:
+				sprite_hearts->changeAnimation(TWO_LIFES);
+				break;
+			case 1:
+				sprite_hearts->changeAnimation(ONE_LIFE);
+				break;
+			default :
+				break;
+			}
+		}
 	}
+
 	else {
+
+		if (sprite_hearts->finished()) sprite_hearts->changeAnimation(DEAD);
+
 		if ((anim == DIE_LEFT || anim == DIE_RIGHT) && sprite->finished()) {
 			if (!dreta) sprite->changeAnimation(DIEDEDEDEDED_LEFT);
 			else sprite->changeAnimation(DIEDEDEDEDED_RIGHT);
 		}
 	}
-
 	setPosition();
 }
 
@@ -255,4 +311,9 @@ box Adventurer::hitBox() {
 		hitBox.maxs = glm::ivec2(pos.x + colisionOffset.x, pos.y + size.y);
 	}
 	return hitBox;
+}
+
+void Adventurer::render() {
+	sprite->render();
+	sprite_hearts->render();
 }

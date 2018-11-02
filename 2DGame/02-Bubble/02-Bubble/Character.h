@@ -22,16 +22,16 @@ public:
 	//attributes
 	bool atacking;
 	glm::ivec2 pos;
-	glm::ivec2 size;
+	glm::ivec2 size, size_hearts;
 	Character* target;
 
 protected:
 
-
-
 	//dibuixar
 	Sprite *sprite;
 	Texture spritesheet;
+	Sprite *sprite_hearts;
+	Texture spritesheet_hearts;
 
 	//dades
 	bool alive;
@@ -52,6 +52,7 @@ protected:
 	bool chargingAtack;
 	float timeChargingAtack;
 	glm::ivec2 hitBoxOffset;
+	bool hitted = false;
 
 	//tamanys
 	glm::ivec2 colisionBox;

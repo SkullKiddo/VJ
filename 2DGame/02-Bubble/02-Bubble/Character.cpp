@@ -14,7 +14,10 @@
 //	sprite->setPosition(glm::vec2(float(pos.x), float(pos.y)));
 //}
 
-void Character::render() { sprite->render(); }
+void Character::render() { 
+	sprite->render(); 
+	//sprite_hearts->render();
+}
 
 box Character::hurtBox()
 {
@@ -35,6 +38,7 @@ void Character::setTileMap(TileMap *tileMap)
 {
 	map = tileMap;
 }
+
 void Character::killTarget() {
 	moveUp = moveDown = moveLeft = moveRight = atackTarguet = false;
 	if (target != NULL) {
