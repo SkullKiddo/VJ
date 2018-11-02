@@ -1,9 +1,6 @@
 #ifndef _ADVENTURER_INCLUDE
 #define _ADVENTURER_INCLUDE
 
-
-#include "Sprite.h"
-#include "TileMap.h"
 #include "Character.h"
 
 class Adventurer : public Character

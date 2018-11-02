@@ -40,9 +40,9 @@ void Character::setTileMap(TileMap *tileMap)
 }
 
 void Character::killTarget() {
-	moveUp = moveDown = moveLeft = moveRight = atackTarguet = false;
+	moveUp = moveDown = moveLeft = moveRight = attackTarguet = false;
 	if (target != NULL) {
-		if (canHit(target)) atackTarguet = true;
+		if (canHit(target)) attackTarguet = true;
 		else {
 			srand(time(0));
 			bool randomBool = rand() % 2;

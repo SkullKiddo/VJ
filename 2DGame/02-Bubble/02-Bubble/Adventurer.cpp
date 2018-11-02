@@ -4,6 +4,7 @@
 #include <GL/glut.h>
 #include "Adventurer.h"
 #include "Game.h"
+#include <Mmsystem.h>
 
 #define MOVEMENT_SPEED 8
 #define SIZE 10
@@ -42,7 +43,7 @@ enum HeartsAnim { FULL, ONE_HIT, TWO_HITS, THREE_HITS, TWO_LIFES, ONE_LIFE, DEAD
 
 void Adventurer::hit() {
 	if (vulnerable && alive) {
-		chargingAtack = false;
+		chargingAttack = false;
 		vulnerable = false;
 		if (lifes > 1) {
 			lifes--;
@@ -126,7 +127,7 @@ void Adventurer::init(const glm::ivec2 &posInicial, ShaderProgram &shaderProgram
 }
 
 void Adventurer::update(int deltaTime) {
-	atacking = false;
+	attacking = false;
 	timeBetweenAttacks += deltaTime;
 	sprite->update(deltaTime);
 	sprite_hearts->update(deltaTime);
@@ -258,9 +259,10 @@ void Adventurer::update(int deltaTime) {
 				timeBetweenAttacks = 0;
 			}
 			if (chargingAtack1 || chargingAtack2 || chargingAtack3) {
-				timeChargingAtack += deltaTime;
-				if ((chargingAtack2 && timeChargingAtack > ATACK_2_CHARGING_TIME) || (timeChargingAtack > ATACK_1_3_CHARGING_TIME)) {
-					atacking = true;
+				timeChargingAttack += deltaTime;
+				if ((chargingAtack2 && timeChargingAttack > ATACK_2_CHARGING_TIME) || (timeChargingAttack > ATACK_1_3_CHARGING_TIME)) {
+					attacking = true;
+					PlaySound(TEXT("audio/hit_placeholder.wav"), NULL, SND_FILENAME | SND_ASYNC | SND_NODEFAULT | SND_NOSTOP);
 					chargingAtack1 = chargingAtack2 = chargingAtack3 = false;
 				}
 			}
