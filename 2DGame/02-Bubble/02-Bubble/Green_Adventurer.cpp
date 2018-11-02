@@ -1,0 +1,347 @@
+#include <cmath>
+#include <iostream>
+#include <GL/glew.h>
+#include <GL/glut.h>
+#include "Green_Adventurer.h"
+#include "Game.h"
+#include <Mmsystem.h>
+
+#define MOVEMENT_SPEED 8
+#define SIZE 10
+#define POSX 10
+#define POSY 10
+
+//ADVENTURER
+#define ALTFRAME 1.f/26.f
+#define ANCHFRAME 1.f/10.f
+#define ANCH_FRAME_PIXELS 50
+#define ALT_FRAME_PIXELS 37
+
+#define MAX_TIME_BETWEEN_ATTACKS 2000
+
+#define ATACK_1_3_CHARGING_TIME (1000.f/MOVEMENT_SPEED) *2.f
+#define ATACK_2_CHARGING_TIME (1000.f/MOVEMENT_SPEED)
+
+//HEARTS
+#define ANCHFRAME_HEARTS 1.f
+#define ALTFRAME_HEARTS 1.f/7.f
+
+#define ANCH_FRAME_HEARTS_PIXELS 225
+#define ALT_FRAME_HEARTS_PIXELS 75
+
+//SMOKE
+#define ANCH_FRAME_SMOKE 1.f
+#define ALT_FRAME_SMOKE 1.f/16.f
+
+enum PlayerAnims
+{
+	IDLE_RIGHT, IDLE_LEFT, CROUCH_RIGHT, CROUCH_LEFT, RUN_RIGHT, RUN_LEFT, JUMP_RIGHT, JUMP_LEFT,
+	SLIDE_RIGHT, SLIDE_LEFT, UNSHEATHED_RIGHT, UNSHEATHED_LEFT, ATTACK_1_RIGHT, ATTACK_1_LEFT,
+	ATTACK_2_RIGHT, ATTACK_2_LEFT, ATTACK_3_RIGHT, ATTACK_3_LEFT, DIE_RIGHT, DIE_LEFT,
+	DRAW_RIGHT, DRAW_LEFT, CAST_RIGHT, CAST_LEFT, JUMP_ATTACK_RIGHT, JUMP_ATTACK_LEFT, HIT_RIGHT, HIT_LEFT, DIEDEDEDEDED_RIGHT, DIEDEDEDEDED_LEFT
+};
+
+enum HeartsAnim { FULL, ONE_HIT, TWO_HITS, THREE_HITS, TWO_LIFES, ONE_LIFE, DEAD };
+
+enum SmokeAnim { SMOKE_RIGHT, SMOKE_LEFT, SMOKE_IDLE };
+
+
+void Green_Adventurer::hit() {
+	if (vulnerable && alive) {
+		chargingAttack = false;
+		vulnerable = false;
+		if (lifes > 1) {
+			lifes--;
+			if (dreta) sprite->changeAnimation(HIT_RIGHT);
+			else sprite->changeAnimation(HIT_LEFT);
+			if (lifes == 2) sprite_hearts->changeAnimation(ONE_HIT);
+			else sprite_hearts->changeAnimation(TWO_HITS);
+		}
+		else {
+			lifes = 0;
+			alive = false;
+			if (dreta) sprite->changeAnimation(DIE_RIGHT);
+			else sprite->changeAnimation(DIE_LEFT);
+			sprite_hearts->changeAnimation(THREE_HITS);
+		}
+	}
+	hitted = true;
+}
+
+void Green_Adventurer::init(const glm::ivec2 &posInicial, ShaderProgram &shaderProgram) {
+	vulnerable = false;
+	alive = true;
+	unshealthed = false;
+	lifes = 3;
+	size = glm::ivec2(50 * 2, 37 * 2);
+	colisionBox.x = size.x;
+	colisionBox.y = size.y / ALT_FRAME_PIXELS;
+	colisionOffset.x = (size.x *16.0f) / ANCH_FRAME_PIXELS;		//21 son els pixels que em sobren per davant i 68 el total
+	colisionOffset.y = (size.y) - colisionBox.y;
+	pos = posInicial;
+	spritesheet.loadFromFile("images/Green_Adventurer.png", TEXTURE_PIXEL_FORMAT_RGBA);
+	spritesheet.setMagFilter(GL_NEAREST);
+	sprite = Sprite::createSprite(size, glm::vec2(ANCHFRAME, ALTFRAME), &spritesheet, &shaderProgram);
+	sprite->setNumberAnimations(30);
+	for (int i = 0; i < 26; i += 2) {
+		sprite->setAnimationSpeed(i, MOVEMENT_SPEED);
+		for (int j = 0; j < animSize[i / 2]; ++j)
+			sprite->addKeyframe(i, glm::vec2(ANCHFRAME * j, ALTFRAME * i));
+	}
+	for (int i = 1; i < 26; i += 2) {
+		sprite->setAnimationSpeed(i, MOVEMENT_SPEED);
+		for (int j = 0; j < animSize[i / 2]; ++j)
+			sprite->addKeyframe(i, glm::vec2(ANCHFRAME * (animSize[i / 2] - 1 - j), ALTFRAME * i));
+	}
+	sprite->setAnimationSpeed(HIT_RIGHT, MOVEMENT_SPEED);
+	for (int j = 0; j < 4; ++j) sprite->addKeyframe(HIT_RIGHT, glm::vec2(ANCHFRAME * j, ALTFRAME * DIE_RIGHT));
+	sprite->setAnimationSpeed(HIT_LEFT, MOVEMENT_SPEED);
+	for (int j = 0; j < 4; ++j) sprite->addKeyframe(HIT_LEFT, glm::vec2(ANCHFRAME * (10 - 1 - j), ALTFRAME * DIE_LEFT));
+	sprite->setAnimationSpeed(DIEDEDEDEDED_RIGHT, MOVEMENT_SPEED);
+	sprite->addKeyframe(DIEDEDEDEDED_RIGHT, glm::vec2(ANCHFRAME * (9), ALTFRAME * DIE_RIGHT));
+	sprite->setAnimationSpeed(DIEDEDEDEDED_LEFT, MOVEMENT_SPEED);
+	for (int j = 0; j < 4; ++j) sprite->addKeyframe(DIEDEDEDEDED_LEFT, glm::vec2(0, ALTFRAME * DIE_LEFT));
+	sprite->setPosition(glm::vec2(pos.x, pos.y));
+
+	//HEARTS
+
+	size_hearts = glm::ivec2(ANCH_FRAME_HEARTS_PIXELS, ALT_FRAME_HEARTS_PIXELS);
+
+	spritesheet_hearts.loadFromFile("images/Hearts.png", TEXTURE_PIXEL_FORMAT_RGBA);
+	spritesheet_hearts.setMagFilter(GL_NEAREST);
+
+	sprite_hearts = Sprite::createSprite(size_hearts, glm::vec2(ANCHFRAME_HEARTS, ALTFRAME_HEARTS), &spritesheet_hearts, &shaderProgram);
+	sprite_hearts->setNumberAnimations(7);
+	sprite_hearts->setAnimationSpeed(FULL, MOVEMENT_SPEED);
+	sprite_hearts->addKeyframe(FULL, glm::vec2(ANCHFRAME_HEARTS, ALTFRAME_HEARTS * 0));
+	sprite_hearts->setAnimationSpeed(ONE_HIT, MOVEMENT_SPEED);
+	sprite_hearts->addKeyframe(ONE_HIT, glm::vec2(ANCHFRAME_HEARTS, ALTFRAME_HEARTS * 1));
+	sprite_hearts->setAnimationSpeed(TWO_HITS, MOVEMENT_SPEED);
+	sprite_hearts->addKeyframe(TWO_HITS, glm::vec2(ANCHFRAME_HEARTS, ALTFRAME_HEARTS * 2));
+	sprite_hearts->setAnimationSpeed(THREE_HITS, MOVEMENT_SPEED);
+	sprite_hearts->addKeyframe(THREE_HITS, glm::vec2(ANCHFRAME_HEARTS, ALTFRAME_HEARTS * 3));
+	sprite_hearts->setAnimationSpeed(TWO_LIFES, MOVEMENT_SPEED);
+	sprite_hearts->addKeyframe(TWO_LIFES, glm::vec2(ANCHFRAME_HEARTS, ALTFRAME_HEARTS * 4));
+	sprite_hearts->setAnimationSpeed(ONE_LIFE, MOVEMENT_SPEED);
+	sprite_hearts->addKeyframe(ONE_LIFE, glm::vec2(ANCHFRAME_HEARTS, ALTFRAME_HEARTS * 5));
+	sprite_hearts->setAnimationSpeed(DEAD, MOVEMENT_SPEED);
+	sprite_hearts->addKeyframe(DEAD, glm::vec2(ANCHFRAME_HEARTS, ALTFRAME_HEARTS * 6));
+
+	sprite_hearts->setPosition(glm::vec2(0, 0));
+	sprite_hearts->changeAnimation(FULL); //per defecte full vida
+
+
+	//SOMKE
+
+	spritesheet_smoke.loadFromFile("images/Smoke.png", TEXTURE_PIXEL_FORMAT_RGBA);
+	spritesheet_smoke.setMagFilter(GL_NEAREST);
+
+	sprite_smoke = Sprite::createSprite(glm::ivec2(33, 37), glm::vec2(ANCH_FRAME_SMOKE, ALT_FRAME_SMOKE), &spritesheet_smoke, &shaderProgram);
+	sprite_smoke->setNumberAnimations(3);
+	sprite_smoke->setAnimationSpeed(SMOKE_RIGHT, MOVEMENT_SPEED);
+	sprite_smoke->setAnimationSpeed(SMOKE_LEFT, MOVEMENT_SPEED);
+	for (int i = 0; i < 8; ++i) {
+		sprite_smoke->addKeyframe(SMOKE_RIGHT, glm::vec2(ANCH_FRAME_SMOKE, ALT_FRAME_SMOKE*i));
+	}
+	for (int i = 8; i < 16; ++i) {
+		sprite_smoke->addKeyframe(SMOKE_LEFT, glm::vec2(ANCH_FRAME_SMOKE, ALT_FRAME_SMOKE*i));
+	}
+	sprite_smoke->setAnimationSpeed(SMOKE_IDLE, MOVEMENT_SPEED);
+	sprite_smoke->addKeyframe(SMOKE_IDLE, glm::vec2(ANCH_FRAME_SMOKE, ALT_FRAME_SMOKE * 0));
+
+}
+
+void Green_Adventurer::update(int deltaTime) {
+	attacking = false;
+	timeBetweenAttacks += deltaTime;
+	sprite->update(deltaTime);
+	sprite_hearts->update(deltaTime);
+	sprite_smoke->update(deltaTime);
+	int anim = sprite->animation();
+	dreta = anim % 2 == 0;
+	if (sprite_smoke->finished()) sprite_smoke->changeAnimation(SMOKE_IDLE);
+	if (sprite->finished()) vulnerable = true;
+	if (alive) {
+		if (sprite->finished() || (anim != ATTACK_1_LEFT && anim != ATTACK_1_RIGHT && anim != CAST_LEFT
+			&& anim != CAST_RIGHT && anim != SMOKE_RIGHT && anim != SMOKE_LEFT&& anim != DRAW_LEFT && 
+			anim != DRAW_RIGHT && anim != JUMP_ATTACK_LEFT && anim != JUMP_ATTACK_RIGHT && 
+			anim != HIT_LEFT && anim != HIT_RIGHT))
+		{
+			auto initialPos = pos;
+
+			if (Game::instance().getSpecialKey(GLUT_KEY_RIGHT)) {
+				pos.x += 1;
+				if (map->collisionMoveRight(pos, colisionBox, colisionOffset))
+				{
+					pos.x -= 1;
+				}
+				else {
+					if (unshealthed) {
+						if (dreta) sprite->changeAnimation(DRAW_RIGHT);
+						else sprite->changeAnimation(DRAW_LEFT);
+						unshealthed = false;
+					}
+					else {
+						if (anim != RUN_RIGHT)
+							sprite->changeAnimation(RUN_RIGHT);
+					}
+				}
+			}
+			else if (Game::instance().getSpecialKey(GLUT_KEY_LEFT)) {
+				pos.x -= 1;
+				if (map->collisionMoveLeft(pos, colisionBox, colisionOffset))
+				{
+					pos.x += 1;
+				}
+				else {
+					if (unshealthed) {
+						if (dreta) sprite->changeAnimation(DRAW_RIGHT);
+						else sprite->changeAnimation(DRAW_LEFT);
+						unshealthed = false;
+					}
+					else {
+						if (anim != RUN_LEFT)
+							sprite->changeAnimation(RUN_LEFT);
+					}
+				}
+			}
+
+			if (Game::instance().getSpecialKey(GLUT_KEY_DOWN)) {
+				pos.y += 1;
+				if (map->collisionMoveDown(pos, colisionBox, colisionOffset))
+				{
+					pos.y -= 1;
+				}
+				else {
+					if (unshealthed) {
+						if (dreta) sprite->changeAnimation(DRAW_RIGHT);
+						else sprite->changeAnimation(DRAW_LEFT);
+						unshealthed = false;
+					}
+					else {
+						if (anim != RUN_RIGHT && anim != RUN_LEFT) {
+							if (dreta) sprite->changeAnimation(RUN_RIGHT);
+							else sprite->changeAnimation(RUN_LEFT);
+						}
+					}
+				}
+			}
+
+			else if (Game::instance().getSpecialKey(GLUT_KEY_UP)) {
+				pos.y -= 1;
+				if (map->collisionMoveUp(pos, colisionBox, colisionOffset))
+				{
+					pos.y += 1;
+				}
+				else {
+					if (unshealthed) {
+						if (dreta) sprite->changeAnimation(DRAW_RIGHT);
+						else sprite->changeAnimation(DRAW_LEFT);
+						unshealthed = false;
+					}
+					else {
+						if (anim != RUN_RIGHT && anim != RUN_LEFT) {
+							if (dreta) sprite->changeAnimation(RUN_RIGHT);
+							else sprite->changeAnimation(RUN_LEFT);
+						}
+					}
+				}
+			}
+
+			if (initialPos == pos && unshealthed && anim != UNSHEATHED_LEFT && anim != UNSHEATHED_RIGHT) {
+				if (dreta) sprite->changeAnimation(UNSHEATHED_RIGHT);
+				else sprite->changeAnimation(UNSHEATHED_LEFT);
+			}
+
+			else if (initialPos == pos && !unshealthed && anim != IDLE_LEFT && anim != IDLE_RIGHT) {
+				if (dreta) sprite->changeAnimation(IDLE_RIGHT);
+				else sprite->changeAnimation(IDLE_LEFT);
+			}
+
+			if (Game::instance().getKey('a')) {
+				unshealthed = true;
+				if (dreta) sprite->changeAnimation(ATTACK_1_RIGHT);
+				else sprite->changeAnimation(ATTACK_1_LEFT);
+			}
+
+			else if (Game::instance().getKey('s')) {
+				if (dreta) {
+					sprite_smoke->setPosition(glm::vec2(pos.x+86, pos.y + 22));
+					sprite->changeAnimation(CAST_RIGHT);
+					sprite_smoke->changeAnimation(SMOKE_RIGHT);
+				}
+				else {
+					sprite_smoke->setPosition(glm::vec2(pos.x-17, pos.y + 22));
+					sprite->changeAnimation(CAST_LEFT);
+					sprite_smoke->changeAnimation(SMOKE_LEFT);
+				}
+			}
+
+			else if (Game::instance().getKey('d')) {
+				if (dreta) sprite->changeAnimation(JUMP_ATTACK_RIGHT);
+				else sprite->changeAnimation(JUMP_ATTACK_LEFT);
+			}
+		}
+
+		if (anim == JUMP_ATTACK_RIGHT && !sprite->finished()) {
+			if (sprite->currentKeyFrame() > 2 && sprite->currentKeyFrame() < 6)
+			{
+				pos.x += 1;
+				if (map->collisionMoveUp(pos, colisionBox, colisionOffset)) pos.x -= 1;
+			}
+		}
+		else if (anim == JUMP_ATTACK_LEFT && !sprite->finished()) {
+			if (sprite->currentKeyFrame() > 1 && sprite->currentKeyFrame() < 5)
+			{
+				pos.x -= 1;
+				if (map->collisionMoveUp(pos, colisionBox, colisionOffset)) pos.x += 1;
+			}
+		}
+
+		if (sprite_hearts->finished() || (sprite_hearts->animation() != ONE_HIT && sprite_hearts->animation() != TWO_HITS
+			&& sprite_hearts->animation() != TWO_LIFES && sprite_hearts->animation() != ONE_LIFE))
+		{
+			switch (lifes)
+			{
+			case 2:
+				sprite_hearts->changeAnimation(TWO_LIFES);
+				break;
+			case 1:
+				sprite_hearts->changeAnimation(ONE_LIFE);
+				break;
+			default:
+				break;
+			}
+		}
+	}
+
+	else {
+
+		if (sprite_hearts->finished()) sprite_hearts->changeAnimation(DEAD);
+
+		if ((anim == DIE_LEFT || anim == DIE_RIGHT) && sprite->finished()) {
+			if (!dreta) sprite->changeAnimation(DIEDEDEDEDED_LEFT);
+			else sprite->changeAnimation(DIEDEDEDEDED_RIGHT);
+		}
+	}
+	setPosition();
+}
+
+box Green_Adventurer::hitBox() {
+	box hitBox;
+	if (dreta) {
+		hitBox.mins = glm::ivec2(pos.x + size.x - colisionOffset.x, pos.y); //no foto offsets ni res perque ocupa tota la vertical
+		hitBox.maxs = glm::ivec2(pos.x + size.x, pos.y + size.y);
+	}
+	else {
+		hitBox.mins = glm::ivec2(pos.x, pos.y);
+		hitBox.maxs = glm::ivec2(pos.x + colisionOffset.x, pos.y + size.y);
+	}
+	return hitBox;
+}
+
+void Green_Adventurer::render() {
+	sprite->render();
+	sprite_hearts->render();
+	sprite_smoke->render();
+}

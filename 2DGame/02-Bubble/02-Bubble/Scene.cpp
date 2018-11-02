@@ -43,7 +43,9 @@ void Scene::init()
 
 
 	//inicialitzar enemics
-	player = new Wizard();
+	if (choice == 1) player = new Adventurer();
+	else if (choice == 2) player = new Green_Adventurer();
+	else player = new Knight();
 
 	player->init(glm::ivec2(SCREEN_WIDTH / 2, SCREEN_HEIGHT / 2), texProgram);
 	enemies[0] = new Skeleton();
@@ -88,6 +90,11 @@ void Scene::update(int deltaTime)
 	player->update(deltaTime);
 	handleAtacks();
 	
+}
+
+void Scene::setChoice(int choice) {
+	this->choice = choice;
+	init();
 }
 
 bool colision(box b1, box b2) {

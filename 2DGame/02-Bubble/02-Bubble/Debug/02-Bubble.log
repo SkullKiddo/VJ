@@ -1,39 +1,6 @@
-﻿  Wizard.cpp
-c:\users\gabri\desktop\vj\2dgame\02-bubble\02-bubble\wizard.cpp(60): warning C4244: '=': conversión de 'float' a 'T'; posible pérdida de datos
-          with
-          [
-              T=int
-          ]
-c:\users\gabri\desktop\vj\2dgame\02-bubble\02-bubble\wizard.cpp(61): warning C4244: '=': conversión de 'float' a 'T'; posible pérdida de datos
-          with
-          [
-              T=int
-          ]
-c:\users\gabri\desktop\vj\2dgame\02-bubble\02-bubble\wizard.cpp(74): warning C4244: 'argumento': conversión de 'float' a 'int'; posible pérdida de datos
-c:\users\gabri\desktop\vj\2dgame\02-bubble\02-bubble\wizard.cpp(80): warning C4244: 'argumento': conversión de 'float' a 'int'; posible pérdida de datos
-c:\users\gabri\desktop\vj\2dgame\02-bubble\02-bubble\wizard.cpp(86): warning C4244: 'argumento': conversión de 'float' a 'int'; posible pérdida de datos
-c:\users\gabri\desktop\vj\2dgame\02-bubble\02-bubble\wizard.cpp(87): warning C4244: 'argumento': conversión de 'float' a 'int'; posible pérdida de datos
-c:\users\gabri\desktop\vj\2dgame\02-bubble\02-bubble\wizard.cpp(88): warning C4244: 'argumento': conversión de 'float' a 'int'; posible pérdida de datos
-c:\users\gabri\desktop\vj\2dgame\02-bubble\02-bubble\wizard.cpp(89): warning C4244: 'argumento': conversión de 'float' a 'int'; posible pérdida de datos
-c:\users\gabri\desktop\vj\2dgame\02-bubble\02-bubble\wizard.cpp(215): warning C4244: 'argumento': conversión de 'float' a 'int'; posible pérdida de datos
-c:\users\gabri\desktop\vj\2dgame\02-bubble\02-bubble\wizard.cpp(216): warning C4244: 'argumento': conversión de 'float' a 'int'; posible pérdida de datos
-c:\users\gabri\desktop\vj\2dgame\02-bubble\02-bubble\wizard.cpp(225): warning C4244: '=': conversión de 'float' a 'T'; posible pérdida de datos
-          with
-          [
-              T=int
-          ]
-c:\users\gabri\desktop\vj\2dgame\02-bubble\02-bubble\wizard.cpp(226): warning C4244: '=': conversión de 'float' a 'T'; posible pérdida de datos
-          with
-          [
-              T=int
-          ]
-c:\users\gabri\desktop\vj\2dgame\02-bubble\02-bubble\wizard.cpp(227): warning C4244: '=': conversión de 'float' a 'T'; posible pérdida de datos
-          with
-          [
-              T=int
-          ]
-SOIL.lib(image_DXT.obj) : warning LNK4099: no se encontró PDB 'vc100.pdb' con 'SOIL.lib(image_DXT.obj)' o en 'C:\Users\Gabri\Desktop\vj\2DGame\02-Bubble\Debug\vc100.pdb'; se vinculará el objeto sin tener en cuenta información de depuración
-SOIL.lib(image_helper.obj) : warning LNK4099: no se encontró PDB 'vc100.pdb' con 'SOIL.lib(image_helper.obj)' o en 'C:\Users\Gabri\Desktop\vj\2DGame\02-Bubble\Debug\vc100.pdb'; se vinculará el objeto sin tener en cuenta información de depuración
-SOIL.lib(SOIL.obj) : warning LNK4099: no se encontró PDB 'vc100.pdb' con 'SOIL.lib(SOIL.obj)' o en 'C:\Users\Gabri\Desktop\vj\2DGame\02-Bubble\Debug\vc100.pdb'; se vinculará el objeto sin tener en cuenta información de depuración
-SOIL.lib(stb_image_aug.obj) : warning LNK4099: no se encontró PDB 'vc100.pdb' con 'SOIL.lib(stb_image_aug.obj)' o en 'C:\Users\Gabri\Desktop\vj\2DGame\02-Bubble\Debug\vc100.pdb'; se vinculará el objeto sin tener en cuenta información de depuración
-  02-Bubble.vcxproj -> C:\Users\Gabri\Desktop\vj\2DGame\02-Bubble\Debug\02-Bubble.exe
+﻿  Menu.cpp
+SOIL.lib(image_DXT.obj) : warning LNK4099: no se encontró PDB 'vc100.pdb' con 'SOIL.lib(image_DXT.obj)' o en 'C:\Users\miki1\Desktop\VJ\2DGame\02-Bubble\Debug\vc100.pdb'; se vinculará el objeto sin tener en cuenta información de depuración
+SOIL.lib(image_helper.obj) : warning LNK4099: no se encontró PDB 'vc100.pdb' con 'SOIL.lib(image_helper.obj)' o en 'C:\Users\miki1\Desktop\VJ\2DGame\02-Bubble\Debug\vc100.pdb'; se vinculará el objeto sin tener en cuenta información de depuración
+SOIL.lib(SOIL.obj) : warning LNK4099: no se encontró PDB 'vc100.pdb' con 'SOIL.lib(SOIL.obj)' o en 'C:\Users\miki1\Desktop\VJ\2DGame\02-Bubble\Debug\vc100.pdb'; se vinculará el objeto sin tener en cuenta información de depuración
+SOIL.lib(stb_image_aug.obj) : warning LNK4099: no se encontró PDB 'vc100.pdb' con 'SOIL.lib(stb_image_aug.obj)' o en 'C:\Users\miki1\Desktop\VJ\2DGame\02-Bubble\Debug\vc100.pdb'; se vinculará el objeto sin tener en cuenta información de depuración
+  02-Bubble.vcxproj -> C:\Users\miki1\Desktop\VJ\2DGame\02-Bubble\Debug\02-Bubble.exe

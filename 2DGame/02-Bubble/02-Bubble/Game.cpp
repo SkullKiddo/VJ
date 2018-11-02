@@ -9,14 +9,18 @@ void Game::init()
 {
 	bPlay = true;
 	glClearColor(0.3f, 0.3f, 0.3f, 1.0f);
-	scene.init();
 	menu.init();
+	scene.init();
 	PlaySound(TEXT("audio/cyka.wav"), NULL, SND_FILENAME | SND_ASYNC | SND_LOOP | SND_NODEFAULT);
 }
 
 bool Game::update(int deltaTime)
 {
 	if (menu.getPlaying()) {
+		if (chosen) {
+			chosen = false;
+			scene.setChoice(menu.getChoice());
+		}
 		if (first) { //El primer cop que iniciem o fem resum hem de posar que no volem tornar a sortir de la partida
 			scene.keepPlaying();
 			first = false;

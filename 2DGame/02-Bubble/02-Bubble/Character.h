@@ -33,6 +33,8 @@ protected:
 	Texture spritesheet;
 	Sprite *sprite_hearts;
 	Texture spritesheet_hearts;
+	Sprite *sprite_smoke;
+	Texture spritesheet_smoke;
 
 	//dades
 	bool alive;

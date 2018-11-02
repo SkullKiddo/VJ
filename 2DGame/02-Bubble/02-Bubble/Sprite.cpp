@@ -127,3 +127,7 @@ bool Sprite::finished()
 void Sprite::stay() {
 	infinita = true;
 }
+
+int Sprite::currentKeyFrame() const {
+	return currentKeyframe;
+}

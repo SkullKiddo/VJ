@@ -37,6 +37,7 @@ public:
 	void changeAnimation(int animId);
 	int animation() const;
 	int previousAnimation() const;
+	int currentKeyFrame() const;
 	
 	void setPosition(const glm::vec2 &pos);
 	bool finished(); //diu si la animacio ha acabat

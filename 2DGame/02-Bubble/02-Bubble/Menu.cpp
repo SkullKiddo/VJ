@@ -9,6 +9,7 @@
 
 #define MAX_TIME_BETWEEN_OPTIONS 1000
 #define MOVEMENT_SPEED 8
+#define CHARACTER_SPEED 6
 #define POSX 0
 #define POSY 0
 
@@ -17,6 +18,17 @@
 
 #define altframe_options 1.f
 #define anchframe_options 1.f/4.f
+
+#define altframe_adv 1.f/26.f
+#define anchframe_adv 1.f/10.f
+
+#define ALT_FRAME_KNIGHT 1.f/12.f
+#define ANCH_FRAME_KNIGHT 1.f/10.f
+
+#define ALT_FRAME_SWORD 1.f/5.f
+#define ANCH_FRAME_SWORD 1.f
+
+
 
 
 
@@ -68,12 +80,76 @@ void Menu::init() {
 	sprite_options->setPosition(glm::ivec2(POSX, POSY));
 
 	sprite_options->changeAnimation(PLAY); //animacio per defecte
+
+	//SWORD
+
+	spritesheet_sword.loadFromFile("images/selection_sword.png",TEXTURE_PIXEL_FORMAT_RGBA);
+	spritesheet_sword.setMagFilter(GL_NEAREST);
+
+	sprite_sword = Sprite::createSprite(glm::ivec2(231, 797)/2, glm::vec2(ANCH_FRAME_SWORD, ALT_FRAME_SWORD), &spritesheet_sword, &texProgram);
+	sprite_sword->setNumberAnimations(1);
+	sprite_sword->setAnimationSpeed(IDLE_SWORD, CHARACTER_SPEED);
+	for (int i = 0; i < 5; ++i) {
+		sprite_sword->addKeyframe(IDLE_SWORD, glm::vec2(ANCH_FRAME_SWORD * 0 , ALT_FRAME_SWORD * i));
+	}
+
+	sprite_sword->setPosition(glm::vec2(455,150));
+	sprite_sword->changeAnimation(IDLE_SWORD);
+
+	//ADVENTURER 
+
+	spritesheet_adv.loadFromFile("images/Adventurer.png", TEXTURE_PIXEL_FORMAT_RGBA);
+	spritesheet_adv.setMagFilter(GL_NEAREST);
+
+	sprite_adv = Sprite::createSprite(glm::ivec2(50, 37)*9, glm::vec2(anchframe_adv, altframe_adv), &spritesheet_adv, &texProgram);
+	sprite_adv->setNumberAnimations(1);
+	sprite_adv->setAnimationSpeed(IDLE_ADV, CHARACTER_SPEED);
+	for (int i = 0; i < 4; ++i) {
+		sprite_adv->addKeyframe(IDLE_ADV, glm::vec2(anchframe_adv * i, altframe_adv * 1));
+	}
+
+	sprite_adv->setPosition(glm::vec2(754, 1040 / 1.85));
+	sprite_adv->changeAnimation(IDLE_ADV);
+
+	//GREEN ADVENTURER
+
+	spritesheet_greenAdv.loadFromFile("images/green_adventurer.png", TEXTURE_PIXEL_FORMAT_RGBA);
+	spritesheet_greenAdv.setMagFilter(GL_NEAREST);
+
+	sprite_greenAdv = Sprite::createSprite(glm::ivec2(50, 37)*9, glm::vec2(anchframe_adv, altframe_adv), &spritesheet_greenAdv, &texProgram);
+	sprite_greenAdv->setNumberAnimations(1);
+	sprite_greenAdv->setAnimationSpeed(IDLE_ADV, CHARACTER_SPEED);
+	for (int i = 0; i < 4; ++i) {
+		sprite_greenAdv->addKeyframe(IDLE_ADV, glm::vec2(anchframe_adv * i, altframe_adv * 1));
+	}
+
+	sprite_greenAdv->setPosition(glm::vec2(1680 / 1.7, 1040 / 1.65));
+	sprite_greenAdv->changeAnimation(IDLE_GREEN_ADV);
+
+	//KNIGHT
+	spritesheet_knight.loadFromFile("images/knight.png", TEXTURE_PIXEL_FORMAT_RGBA);
+	spritesheet_knight.setMagFilter(GL_NEAREST);
+
+	sprite_knight = Sprite::createSprite(glm::ivec2(80, 42)*13, glm::vec2(ANCH_FRAME_KNIGHT, ALT_FRAME_KNIGHT), &spritesheet_knight, &texProgram);
+	sprite_knight->setNumberAnimations(1);
+	sprite_knight->setAnimationSpeed(IDLE_ADV, CHARACTER_SPEED);
+	for (int i = 0; i < 4; ++i) {
+		sprite_knight->addKeyframe(IDLE_ADV, glm::vec2(ANCH_FRAME_KNIGHT * i, ALT_FRAME_KNIGHT * 8));
+	}
+
+	sprite_knight->setPosition(glm::vec2(10, 420));
+	sprite_knight->changeAnimation(IDLE_KNIGHT);
+
 }
 
 void Menu::update(int deltaTime) {
 
 	sprite->update(deltaTime);
 	sprite_options->update(deltaTime);
+	sprite_adv->update(deltaTime);
+	sprite_greenAdv->update(deltaTime);
+	sprite_knight->update(deltaTime);
+	sprite_sword->update(deltaTime);
 	auto anim = sprite_options->animation();
 
 	if (sprite->finished())
@@ -97,16 +173,75 @@ void Menu::update(int deltaTime) {
 				break;
 			}
 		}
-		if (Game::instance().getKey('e')) {
-			switch (anim)
-			{
-			case PLAY :
-				play = true;
+		else if (Game::instance().getSpecialKey(GLUT_KEY_UP)) {
+			switch (anim) {
+			case PLAY:
+				sprite_options->changeAnimation(EXIT);
 				break;
-			case EXIT :
-				exit = true;
+			case INSTRUCTIONS:
+				sprite_options->changeAnimation(PLAY);
+				break;
+			case CREDITS:
+				sprite_options->changeAnimation(INSTRUCTIONS);
+				break;
+			default:
+				sprite_options->changeAnimation(CREDITS);
 				break;
 			}
+		}
+		else if (Game::instance().getSpecialKey(GLUT_KEY_RIGHT) && sprite_sword->finished()) {
+			sprite_sword->changeAnimation(IDLE_SWORD);
+			switch (choice) {
+			case 1:
+				choice = 2;
+				sprite_sword->setPosition(glm::vec2(920, 250));
+				break;
+			case 2:
+				choice = 3;
+				sprite_sword->setPosition(glm::vec2(1160, 320));
+				break;
+			case 3:
+				choice = 1;
+				sprite_sword->setPosition(glm::vec2(455, 150));
+				break;
+			}
+		}
+		else if (Game::instance().getSpecialKey(GLUT_KEY_LEFT) && sprite_sword->finished()) {
+			sprite_sword->changeAnimation(IDLE_SWORD);
+			switch (choice) {
+			case 1:
+				choice = 3;
+				sprite_sword->setPosition(glm::vec2(455, 150));
+				break;
+			case 2:
+				choice = 1;
+				sprite_sword->setPosition(glm::vec2(920, 250));
+				break;
+			case 3:
+				choice = 2;
+				sprite_sword->setPosition(glm::vec2(1160, 320));
+				break;
+			}
+		}
+		if (Game::instance().getKey('e')) {
+			if (!selection) {
+				switch (anim)
+				{
+				case PLAY:
+					if (first) {
+						selection = true;
+					}
+					else play = true;
+					break;
+				case EXIT:
+					exit = true;
+					break;
+				}
+			}
+		}
+		else if (Game::instance().getKey('s')) {
+			play = true;
+			first = false;
 		}
 	}
 }
@@ -122,7 +257,14 @@ void Menu::render() {
 	texProgram.setUniform2f("texCoordDispl", 0.f, 0.f);
 	
 	sprite->render();
-	sprite_options->render();
+	
+	if (!selection) sprite_options->render();
+	else {
+		sprite_adv->render();
+		sprite_greenAdv->render();
+		sprite_knight->render();
+		sprite_sword->render();
+	}
 }
 
 void Menu::stopPlaying() {
@@ -165,4 +307,8 @@ void Menu::initShaders() {
 	texProgram.bindFragmentOutput("outColor");
 	vShader.free();
 	fShader.free();
+}
+
+int Menu::getChoice() {
+	return choice;
 }

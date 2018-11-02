@@ -15,6 +15,7 @@
 #include "Adventurer.h"
 #include "Knight.h"
 #include "Wizard.h"
+#include "Green_Adventurer.h"
 
 // Scene contains all the entities of our game.
 // It is responsible for updating and render them.
@@ -46,6 +47,7 @@ public:
 	void setCollsion();
 	bool getEscape();
 	void keepPlaying();
+	void setChoice(int choice);
 
 private:
 	void initShaders();
@@ -62,9 +64,11 @@ private:
 	Texture texs;
 	TexturedQuad *background;
 	bool bcollision = false;
-	bool escape = false;
+	bool escape = true;
 	bool first = false;
 	void handleAtacks();
+
+	int choice = 1;
 };
 
 
