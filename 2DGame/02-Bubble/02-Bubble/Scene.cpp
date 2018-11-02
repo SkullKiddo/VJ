@@ -43,7 +43,7 @@ void Scene::init()
 
 
 	//inicialitzar enemics
-	player = new Knight();
+	player = new Wizard();
 
 	player->init(glm::ivec2(SCREEN_WIDTH / 2, SCREEN_HEIGHT / 2), texProgram);
 	enemies[0] = new Skeleton();

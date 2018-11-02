@@ -51,7 +51,7 @@ void Knight::init(const glm::ivec2 &posInicial, ShaderProgram &shaderProgram) {
 	lifes = 3;
 	size = glm::ivec2(50 * 3, 37 * 3);
 	colisionBox.x = size.x;
-	colisionBox.y = size.y / ALT_FRAME_PIXELS;
+	colisionBox.y = size.y / (ALT_FRAME_PIXELS/2);
 	colisionOffset.x = (size.x *33.0f) / ANCH_FRAME_PIXELS;		//21 son els pixels que em sobren per davant i 68 el total
 	colisionOffset.y = (size.y) - colisionBox.y;
 	pos = posInicial;
@@ -97,117 +97,119 @@ void Knight::init(const glm::ivec2 &posInicial, ShaderProgram &shaderProgram) {
 
 void Knight::update(int deltaTime) {
 	sprite->update(deltaTime);
-	//float debug = ATTACK_CHARGING_TIME;
-	//attacking = false;
-	//int anim = sprite->animation();
-	//dreta = anim % 2 == 0;
-	//if (sprite->finished()) vulnerable = true;
-	//if (alive) {
-	//	if (blocking) {
-	//		if (!Game::instance().getKey('s')) {
-	//			blocking = false;
-	//			if (dreta) sprite->changeAnimation(LOWER_SHIELD_RIGHT);
-	//			else sprite->changeAnimation(LOWER_SHIELD_LEFT);
-	//		}
-	//		if (Game::instance().getKey('a') && (sprite->finished() || anim != SHIELD_STRIKE_RIGHT && anim != SHIELD_STRIKE_LEFT)) {
-	//			if (dreta) sprite->changeAnimation(SHIELD_STRIKE_RIGHT);
-	//			else sprite->changeAnimation(SHIELD_STRIKE_LEFT);
-	//			sprite->stay();
-	//		}
-	//	}
-	//	else if (sprite->finished() || (anim != HIT_LEFT && anim != HIT_RIGHT && anim != ATTACK_LEFT && anim != ATTACK_RIGHT && anim != LOWER_SHIELD_LEFT && anim != LOWER_SHIELD_RIGHT && anim != RISE_SHIELD_LEFT && anim != RISE_SHIELD_RIGHT)) {
-	//		auto initialPos = pos;
+	float debug = ATTACK_CHARGING_TIME;
+	attacking = false;
+	int anim = sprite->animation();
+	dreta = anim % 2 == 0;
+	if (sprite->finished()) vulnerable = true;
+	if (alive) {
+		if (blocking) {
+			if (!Game::instance().getKey('s')) {
+				blocking = false;
+				if (dreta) sprite->changeAnimation(LOWER_SHIELD_RIGHT);
+				else sprite->changeAnimation(LOWER_SHIELD_LEFT);
+			}
+			if (Game::instance().getKey('a') && (sprite->finished() || anim != SHIELD_STRIKE_RIGHT && anim != SHIELD_STRIKE_LEFT)) {
+				if (dreta) sprite->changeAnimation(SHIELD_STRIKE_RIGHT);
+				else sprite->changeAnimation(SHIELD_STRIKE_LEFT);
+				sprite->stay();
+			}
+		}
+		else if (sprite->finished() || (anim != HIT_LEFT && anim != HIT_RIGHT && anim != ATTACK_LEFT && anim != ATTACK_RIGHT && anim != LOWER_SHIELD_LEFT && anim != LOWER_SHIELD_RIGHT && anim != RISE_SHIELD_LEFT && anim != RISE_SHIELD_RIGHT)) {
+			auto initialPos = pos;
 
-	//		if (Game::instance().getSpecialKey(GLUT_KEY_RIGHT))
-	//		{
-	//			dreta = true;
-	//			pos.x += 1;
-	//			if (map->collisionMoveRight(pos, colisionBox, colisionOffset))
-	//			{
-	//				pos.x -= 1;
-	//			}
-	//			else if (anim != MOVE_RIGHT)
-	//				sprite->changeAnimation(MOVE_RIGHT);
-	//		}
-	//		else if (Game::instance().getSpecialKey(GLUT_KEY_LEFT))
-	//		{
-	//			dreta = false;
-	//			pos.x -= 1;
-	//			if (map->collisionMoveLeft(pos, colisionBox, colisionOffset))
-	//			{
-	//				pos.x += 1;
-	//			}
-	//			else if (anim != MOVE_LEFT)
-	//				sprite->changeAnimation(MOVE_LEFT);
-	//		}
-	//		if (Game::instance().getSpecialKey(GLUT_KEY_DOWN))
-	//		{
-	//			pos.y += 1;
-	//			if (map->collisionMoveDown(pos, colisionBox, colisionOffset))
-	//			{
-	//				pos.y -= 1;
-	//			}
-	//			else if (anim != MOVE_RIGHT && anim != MOVE_LEFT) {
-	//				if (!dreta) sprite->changeAnimation(MOVE_LEFT);
-	//				else sprite->changeAnimation(MOVE_RIGHT);
-	//			}
-	//		}
-	//		else if (Game::instance().getSpecialKey(GLUT_KEY_UP))
-	//		{
-	//			pos.y -= 1;
-	//			if (map->collisionMoveUp(pos, colisionBox, colisionOffset))
-	//			{
-	//				pos.y += 1;
-	//			}
-	//			else if (anim != MOVE_RIGHT && anim != MOVE_LEFT) {
-	//				if (!dreta) sprite->changeAnimation(MOVE_LEFT);
-	//				else sprite->changeAnimation(MOVE_RIGHT);
-	//			}
-	//		}
+			if (Game::instance().getSpecialKey(GLUT_KEY_RIGHT))
+			{
+				dreta = true;
+				pos.x += 1;
+				if (map->collisionMoveRight(pos, colisionBox, colisionOffset))
+				{
+					pos.x -= 1;
+				}
+				else if (anim != MOVE_RIGHT)
+					sprite->changeAnimation(MOVE_RIGHT);
+			}
+			else if (Game::instance().getSpecialKey(GLUT_KEY_LEFT))
+			{
+				dreta = false;
+				pos.x -= 1;
+				if (map->collisionMoveLeft(pos, colisionBox, colisionOffset))
+				{
+					pos.x += 1;
+				}
+				else if (anim != MOVE_LEFT)
+					sprite->changeAnimation(MOVE_LEFT);
+			}
+			if (Game::instance().getSpecialKey(GLUT_KEY_DOWN))
+			{
+				pos.y += 1;
+				if (map->collisionMoveDown(pos, colisionBox, colisionOffset))
+				{
+					pos.y -= 1;
+				}
+				else if (anim != MOVE_RIGHT && anim != MOVE_LEFT) {
+					if (!dreta) sprite->changeAnimation(MOVE_LEFT);
+					else sprite->changeAnimation(MOVE_RIGHT);
+				}
+			}
+			else if (Game::instance().getSpecialKey(GLUT_KEY_UP))
+			{
+				pos.y -= 1;
+				if (map->collisionMoveUp(pos, colisionBox, colisionOffset))
+				{
+					pos.y += 1;
+				}
+				else if (anim != MOVE_RIGHT && anim != MOVE_LEFT) {
+					if (!dreta) sprite->changeAnimation(MOVE_LEFT);
+					else sprite->changeAnimation(MOVE_RIGHT);
+				}
+			}
 
-	//		if (Game::instance().getKey('a')) {
-	//			chargingAttack = true;
-	//			//PlaySound(TEXT("audio/axeSwingCutre.wav"), NULL, SND_FILENAME | SND_ASYNC | SND_NODEFAULT | SND_NOSTOP);
-	//			if (dreta) sprite->changeAnimation(ATTACK_RIGHT);
-	//			else sprite->changeAnimation(ATTACK_LEFT);
-	//		}
+			if (Game::instance().getKey('a')) {
+				chargingAttack = true;
+				//PlaySound(TEXT("audio/axeSwingCutre.wav"), NULL, SND_FILENAME | SND_ASYNC | SND_NODEFAULT | SND_NOSTOP);
+				if (dreta) sprite->changeAnimation(ATTACK_RIGHT);
+				else sprite->changeAnimation(ATTACK_LEFT);
+			}
 
-	//		if (Game::instance().getKey('s')) {
-	//			blocking = true;
-	//			if (dreta) sprite->changeAnimation(RISE_SHIELD_RIGHT);
-	//			else sprite->changeAnimation(RISE_SHIELD_LEFT);
-	//			sprite->stay();
-	//		}
+			if (Game::instance().getKey('s')) {
+				blocking = true;
+				if (dreta) sprite->changeAnimation(RISE_SHIELD_RIGHT);
+				else sprite->changeAnimation(RISE_SHIELD_LEFT);
+				sprite->stay();
+			}
 
-	//		if (initialPos == pos) {
-	//			if (dreta && anim != IDLE_RIGHT) sprite->changeAnimation(IDLE_RIGHT);
-	//			else if (!dreta && anim != IDLE_LEFT) sprite->changeAnimation(IDLE_LEFT);
-	//		}
-	//	}
-	//}
-	//else {
-	//}
-	//if (chargingAttack) {
-	//	timeChargingAttack+= deltaTime;
-	//	if (timeChargingAttack> ATTACK_CHARGING_TIME) {
-	//		PlaySound(TEXT("audio/hit_placeholder.wav"), NULL, SND_FILENAME | SND_ASYNC | SND_NODEFAULT | SND_NOSTOP);
-	//		attacking = true;
-	//		chargingAttack= false;
-	//		timeChargingAttack= 0.f;
-	//	}
-	//}
-	//setPosition();
+			if (initialPos == pos) {
+				if (dreta && anim != IDLE_RIGHT) sprite->changeAnimation(IDLE_RIGHT);
+				else if (!dreta && anim != IDLE_LEFT) sprite->changeAnimation(IDLE_LEFT);
+			}
+		}
+	}
+	else {
+	}
+	if (chargingAttack) {
+		timeChargingAttack+= deltaTime;
+		if (timeChargingAttack> ATTACK_CHARGING_TIME) {
+			PlaySound(TEXT("audio/hit_placeholder.wav"), NULL, SND_FILENAME | SND_ASYNC | SND_NODEFAULT | SND_NOSTOP);
+			attacking = true;
+			chargingAttack= false;
+			timeChargingAttack= 0.f;
+		}
+	}
+	setPosition();
 }
 
 box Knight::hitBox() {
 	box hitBox;
+	int ymax = pos.y + (26.f * size.y) / 42.f;
 	if (dreta) {
 		hitBox.mins = glm::ivec2(pos.x + size.x - colisionOffset.x, pos.y); //no foto offsets ni res perque ocupa tota la vertical
-		hitBox.maxs = glm::ivec2(pos.x + size.x, pos.y + size.y);
+		hitBox.maxs = glm::ivec2(pos.x + size.x -(12.f*size.x)/80.f, ymax);
 	}
 	else {
-		hitBox.mins = glm::ivec2(pos.x, pos.y);
-		hitBox.maxs = glm::ivec2(pos.x + colisionOffset.x, pos.y + size.y);
+		hitBox.mins = glm::ivec2(pos.x + (12.f * size.x) / 80.f, pos.y);
+		hitBox.maxs = glm::ivec2(pos.x + colisionOffset.x, ymax);
 	}
 	return hitBox;
 }
+
