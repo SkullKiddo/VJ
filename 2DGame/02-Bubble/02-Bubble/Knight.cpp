@@ -97,106 +97,106 @@ void Knight::init(const glm::ivec2 &posInicial, ShaderProgram &shaderProgram) {
 
 void Knight::update(int deltaTime) {
 	sprite->update(deltaTime);
-	//float debug = ATTACK_CHARGING_TIME;
-	//attacking = false;
-	//int anim = sprite->animation();
-	//dreta = anim % 2 == 0;
-	//if (sprite->finished()) vulnerable = true;
-	//if (alive) {
-	//	if (blocking) {
-	//		if (!Game::instance().getKey('s')) {
-	//			blocking = false;
-	//			if (dreta) sprite->changeAnimation(LOWER_SHIELD_RIGHT);
-	//			else sprite->changeAnimation(LOWER_SHIELD_LEFT);
-	//		}
-	//		if (Game::instance().getKey('a') && (sprite->finished() || anim != SHIELD_STRIKE_RIGHT && anim != SHIELD_STRIKE_LEFT)) {
-	//			if (dreta) sprite->changeAnimation(SHIELD_STRIKE_RIGHT);
-	//			else sprite->changeAnimation(SHIELD_STRIKE_LEFT);
-	//			sprite->stay();
-	//		}
-	//	}
-	//	else if (sprite->finished() || (anim != HIT_LEFT && anim != HIT_RIGHT && anim != ATTACK_LEFT && anim != ATTACK_RIGHT && anim != LOWER_SHIELD_LEFT && anim != LOWER_SHIELD_RIGHT && anim != RISE_SHIELD_LEFT && anim != RISE_SHIELD_RIGHT)) {
-	//		auto initialPos = pos;
+	float debug = ATTACK_CHARGING_TIME;
+	attacking = false;
+	int anim = sprite->animation();
+	dreta = anim % 2 == 0;
+	if (sprite->finished()) vulnerable = true;
+	if (alive) {
+		if (blocking) {
+			if (!Game::instance().getKey('s')) {
+				blocking = false;
+				if (dreta) sprite->changeAnimation(LOWER_SHIELD_RIGHT);
+				else sprite->changeAnimation(LOWER_SHIELD_LEFT);
+			}
+			if (Game::instance().getKey('a') && (sprite->finished() || anim != SHIELD_STRIKE_RIGHT && anim != SHIELD_STRIKE_LEFT)) {
+				if (dreta) sprite->changeAnimation(SHIELD_STRIKE_RIGHT);
+				else sprite->changeAnimation(SHIELD_STRIKE_LEFT);
+				sprite->stay();
+			}
+		}
+		else if (sprite->finished() || (anim != HIT_LEFT && anim != HIT_RIGHT && anim != ATTACK_LEFT && anim != ATTACK_RIGHT && anim != LOWER_SHIELD_LEFT && anim != LOWER_SHIELD_RIGHT && anim != RISE_SHIELD_LEFT && anim != RISE_SHIELD_RIGHT)) {
+			auto initialPos = pos;
 
-	//		if (Game::instance().getSpecialKey(GLUT_KEY_RIGHT))
-	//		{
-	//			dreta = true;
-	//			pos.x += 1;
-	//			if (map->collisionMoveRight(pos, colisionBox, colisionOffset))
-	//			{
-	//				pos.x -= 1;
-	//			}
-	//			else if (anim != MOVE_RIGHT)
-	//				sprite->changeAnimation(MOVE_RIGHT);
-	//		}
-	//		else if (Game::instance().getSpecialKey(GLUT_KEY_LEFT))
-	//		{
-	//			dreta = false;
-	//			pos.x -= 1;
-	//			if (map->collisionMoveLeft(pos, colisionBox, colisionOffset))
-	//			{
-	//				pos.x += 1;
-	//			}
-	//			else if (anim != MOVE_LEFT)
-	//				sprite->changeAnimation(MOVE_LEFT);
-	//		}
-	//		if (Game::instance().getSpecialKey(GLUT_KEY_DOWN))
-	//		{
-	//			pos.y += 1;
-	//			if (map->collisionMoveDown(pos, colisionBox, colisionOffset))
-	//			{
-	//				pos.y -= 1;
-	//			}
-	//			else if (anim != MOVE_RIGHT && anim != MOVE_LEFT) {
-	//				if (!dreta) sprite->changeAnimation(MOVE_LEFT);
-	//				else sprite->changeAnimation(MOVE_RIGHT);
-	//			}
-	//		}
-	//		else if (Game::instance().getSpecialKey(GLUT_KEY_UP))
-	//		{
-	//			pos.y -= 1;
-	//			if (map->collisionMoveUp(pos, colisionBox, colisionOffset))
-	//			{
-	//				pos.y += 1;
-	//			}
-	//			else if (anim != MOVE_RIGHT && anim != MOVE_LEFT) {
-	//				if (!dreta) sprite->changeAnimation(MOVE_LEFT);
-	//				else sprite->changeAnimation(MOVE_RIGHT);
-	//			}
-	//		}
+			if (Game::instance().getSpecialKey(GLUT_KEY_RIGHT))
+			{
+				dreta = true;
+				pos.x += 1;
+				if (map->collisionMoveRight(pos, colisionBox, colisionOffset))
+				{
+					pos.x -= 1;
+				}
+				else if (anim != MOVE_RIGHT)
+					sprite->changeAnimation(MOVE_RIGHT);
+			}
+			else if (Game::instance().getSpecialKey(GLUT_KEY_LEFT))
+			{
+				dreta = false;
+				pos.x -= 1;
+				if (map->collisionMoveLeft(pos, colisionBox, colisionOffset))
+				{
+					pos.x += 1;
+				}
+				else if (anim != MOVE_LEFT)
+					sprite->changeAnimation(MOVE_LEFT);
+			}
+			if (Game::instance().getSpecialKey(GLUT_KEY_DOWN))
+			{
+				pos.y += 1;
+				if (map->collisionMoveDown(pos, colisionBox, colisionOffset))
+				{
+					pos.y -= 1;
+				}
+				else if (anim != MOVE_RIGHT && anim != MOVE_LEFT) {
+					if (!dreta) sprite->changeAnimation(MOVE_LEFT);
+					else sprite->changeAnimation(MOVE_RIGHT);
+				}
+			}
+			else if (Game::instance().getSpecialKey(GLUT_KEY_UP))
+			{
+				pos.y -= 1;
+				if (map->collisionMoveUp(pos, colisionBox, colisionOffset))
+				{
+					pos.y += 1;
+				}
+				else if (anim != MOVE_RIGHT && anim != MOVE_LEFT) {
+					if (!dreta) sprite->changeAnimation(MOVE_LEFT);
+					else sprite->changeAnimation(MOVE_RIGHT);
+				}
+			}
 
-	//		if (Game::instance().getKey('a')) {
-	//			chargingAttack = true;
-	//			//PlaySound(TEXT("audio/axeSwingCutre.wav"), NULL, SND_FILENAME | SND_ASYNC | SND_NODEFAULT | SND_NOSTOP);
-	//			if (dreta) sprite->changeAnimation(ATTACK_RIGHT);
-	//			else sprite->changeAnimation(ATTACK_LEFT);
-	//		}
+			if (Game::instance().getKey('a')) {
+				chargingAttack = true;
+				//PlaySound(TEXT("audio/axeSwingCutre.wav"), NULL, SND_FILENAME | SND_ASYNC | SND_NODEFAULT | SND_NOSTOP);
+				if (dreta) sprite->changeAnimation(ATTACK_RIGHT);
+				else sprite->changeAnimation(ATTACK_LEFT);
+			}
 
-	//		if (Game::instance().getKey('s')) {
-	//			blocking = true;
-	//			if (dreta) sprite->changeAnimation(RISE_SHIELD_RIGHT);
-	//			else sprite->changeAnimation(RISE_SHIELD_LEFT);
-	//			sprite->stay();
-	//		}
+			if (Game::instance().getKey('s')) {
+				blocking = true;
+				if (dreta) sprite->changeAnimation(RISE_SHIELD_RIGHT);
+				else sprite->changeAnimation(RISE_SHIELD_LEFT);
+				sprite->stay();
+			}
 
-	//		if (initialPos == pos) {
-	//			if (dreta && anim != IDLE_RIGHT) sprite->changeAnimation(IDLE_RIGHT);
-	//			else if (!dreta && anim != IDLE_LEFT) sprite->changeAnimation(IDLE_LEFT);
-	//		}
-	//	}
-	//}
-	//else {
-	//}
-	//if (chargingAttack) {
-	//	timeChargingAttack+= deltaTime;
-	//	if (timeChargingAttack> ATTACK_CHARGING_TIME) {
-	//		PlaySound(TEXT("audio/hit_placeholder.wav"), NULL, SND_FILENAME | SND_ASYNC | SND_NODEFAULT | SND_NOSTOP);
-	//		attacking = true;
-	//		chargingAttack= false;
-	//		timeChargingAttack= 0.f;
-	//	}
-	//}
-	//setPosition();
+			if (initialPos == pos) {
+				if (dreta && anim != IDLE_RIGHT) sprite->changeAnimation(IDLE_RIGHT);
+				else if (!dreta && anim != IDLE_LEFT) sprite->changeAnimation(IDLE_LEFT);
+			}
+		}
+	}
+	else {
+	}
+	if (chargingAttack) {
+		timeChargingAttack+= deltaTime;
+		if (timeChargingAttack> ATTACK_CHARGING_TIME) {
+			PlaySound(TEXT("audio/hit_placeholder.wav"), NULL, SND_FILENAME | SND_ASYNC | SND_NODEFAULT | SND_NOSTOP);
+			attacking = true;
+			chargingAttack= false;
+			timeChargingAttack= 0.f;
+		}
+	}
+	setPosition();
 }
 
 box Knight::hitBox() {
